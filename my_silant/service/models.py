@@ -52,5 +52,5 @@ class Complaint(models.Model):
         return (self.recovery_date - self.date_rejection).days
 
     class Meta:
-        verbose_name = '«ТО» (техническое обслуживание)'
+        verbose_name = 'Рекламации'
 
