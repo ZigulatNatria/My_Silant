@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% for c in complaint %}
+        <p>{{c.date_rejection}}</p>
+        <p>{{c.operating_time}}</p>
+        <p>{{c.failure_node}}</p>
+        <p>{{c.failure_description}}</p>
+        <p>{{c.recovery_method}}</p>
+        <p>{{c.spare_parts}}</p>
+        <p>{{c.recovery_date}}</p>
+        <p>{{c.downtime}}</p>
+        <p>{{c.machine_complaint}}</p>
+    {% endfor %}
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% for m in machine %}
+        <p>{{m.number_machine}}</p>
+        <p>{{m.technique_model}}</p>
+        <p>{{m.engine_model}}</p>
+        <p>{{m.engine_number}}</p>
+        <p>{{m.transmission_model}}</p>
+        <p>{{m.transmission_number}}</p>
+        <p>{{m.drive_axle_model}}</p>
+        <p>{{m.drive_axle_number}}</p>
+        <p>{{m.steering_bridge_model}}</p>
+        <p>{{m.steering_bridge_number}}</p>
+        <p>{{m.supply_contract}}</p>
+        <p>{{m.shipping_date}}</p>
+        <p>{{m.consignee}}</p>
+        <p>{{m.delivery_address}}</p>
+        <p>{{m.equipment}}</p>
+        <p>{{m.client}}</p>
+        <p>{{m.service_company}}</p>
+    {% endfor %}
+</body>
+</html>
