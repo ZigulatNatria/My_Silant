@@ -16,6 +16,7 @@
         <p>{{m.drive_axle_number}}</p>
         <p>{{m.steering_bridge_model}}</p>
         <p>{{m.steering_bridge_number}}</p>
+        {% if is_aut %}
         <p>{{m.supply_contract}}</p>
         <p>{{m.shipping_date}}</p>
         <p>{{m.consignee}}</p>
@@ -23,6 +24,7 @@
         <p>{{m.equipment}}</p>
         <p>{{m.client}}</p>
         <p>{{m.service_company}}</p>
+        {% endif %}
     {% endfor %}
 </body>
 </html>
