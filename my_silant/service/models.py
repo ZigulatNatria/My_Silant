@@ -86,6 +86,10 @@ class Machine(models.Model):
     # service_company = models.TextField(verbose_name='Сервисная компания') #TODO справочник пользователей с соответствующими правами
     service_company = models.ForeignKey(ServiceCompany, verbose_name='Сервисная компания', on_delete=models.CASCADE)
 
+    def get_absolute_url(self):
+        # return f'/to/{self.id}' #TODO переписать на id когда раскину по деталям
+        return f'/machine'
+
     def __str__(self):
         return self.number_machine
 
@@ -112,6 +116,10 @@ class TO(models.Model):
     company_make_service = models.ForeignKey(ServiceCompany, on_delete=models.CASCADE)
     # company_make_service = models.TextField(verbose_name='Организация, проводившая ТО') #TODO добавить справочник
     machine_to = models.ForeignKey(Machine, on_delete=models.CASCADE)
+
+    def get_absolute_url(self):
+        # return f'/to/{self.id}' #TODO переписать на id когда раскину по деталям
+        return f'/to'
 
     def __str__(self):
         return self.work_order_number
@@ -151,6 +159,10 @@ class Complaint(models.Model):
     spare_parts = models.TextField(verbose_name='Используемые запасные части')
     recovery_date = models.DateField(verbose_name='Дата восстановления') #TODO календарь
     machine_complaint = models.ForeignKey(Machine, on_delete=models.CASCADE)
+
+    def get_absolute_url(self):
+        # return f'/to/{self.id}' #TODO переписать на id когда раскину по деталям
+        return f'/complaint'
 
     def downtime(self):
         return (self.recovery_date - self.date_rejection).days
