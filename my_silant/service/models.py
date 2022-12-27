@@ -68,14 +68,14 @@ class SteeringBridgeModel(models.Model):
 
 class Machine(models.Model):
     number_machine = models.TextField(unique=True, verbose_name='Зав. № машины')
-    technique_model = models.OneToOneField(TechniqueModel, verbose_name='Модель техники', on_delete=models.CASCADE)
-    engine_model = models.OneToOneField(EngineModel, verbose_name='Модель двигателя', on_delete=models.CASCADE)
+    technique_model = models.ForeignKey(TechniqueModel, verbose_name='Модель техники', on_delete=models.CASCADE)
+    engine_model = models.ForeignKey(EngineModel, verbose_name='Модель двигателя', on_delete=models.CASCADE)
     engine_number = models.TextField(verbose_name='Зав. № двигателя')
-    transmission_model = models.OneToOneField(TransmissionModel, verbose_name='Модель трансмиссии', on_delete=models.CASCADE)
+    transmission_model = models.ForeignKey(TransmissionModel, verbose_name='Модель трансмиссии', on_delete=models.CASCADE)
     transmission_number = models.TextField(verbose_name='Зав. № трансмиссии')
-    drive_axle_model = models.OneToOneField(DriveAxleModel, verbose_name='Модель ведущего моста', on_delete=models.CASCADE)
+    drive_axle_model = models.ForeignKey(DriveAxleModel, verbose_name='Модель ведущего моста', on_delete=models.CASCADE)
     drive_axle_number = models.TextField(verbose_name='Зав. № ведущего моста')
-    steering_bridge_model = models.OneToOneField(SteeringBridgeModel, verbose_name='Модель управляемого моста', on_delete=models.CASCADE)
+    steering_bridge_model = models.ForeignKey(SteeringBridgeModel, verbose_name='Модель управляемого моста', on_delete=models.CASCADE)
     steering_bridge_number = models.TextField(verbose_name='Зав. № управляемого моста')
     supply_contract = models.TextField(verbose_name='Договор поставки №, дата')
     shipping_date = models.DateField(verbose_name='Дата отгрузки с завода') #TODO календарь
@@ -108,14 +108,14 @@ class ServiceType(models.Model):
 
 
 class TO(models.Model):
-    service_type = models.OneToOneField(ServiceType, verbose_name='Вид ТО', on_delete=models.CASCADE)
+    service_type = models.ForeignKey(ServiceType, verbose_name='Вид ТО', on_delete=models.CASCADE)
     service_date = models.DateField(verbose_name='Дата проведения ТО') #TODO календарь
     operating_time = models.FloatField(verbose_name='Наработка, м/час')
     work_order_number = models.TextField(verbose_name='№ заказ-наряда')
     work_order_date = models.DateField(verbose_name='дата заказ-наряда')  # TODO календарь
-    company_make_service = models.ForeignKey(ServiceCompany, on_delete=models.CASCADE)
+    company_make_service = models.ForeignKey(ServiceCompany, verbose_name='Сервисная компания', on_delete=models.CASCADE)
     # company_make_service = models.TextField(verbose_name='Организация, проводившая ТО') #TODO добавить справочник
-    machine_to = models.ForeignKey(Machine, on_delete=models.CASCADE)
+    machine_to = models.ForeignKey(Machine, verbose_name='Зав. № машины', on_delete=models.CASCADE)
 
     def get_absolute_url(self):
         # return f'/to/{self.id}' #TODO переписать на id когда раскину по деталям
@@ -153,12 +153,13 @@ class RecoveryMethod(models.Model):
 class Complaint(models.Model):
     date_rejection = models.DateField(verbose_name='Дата отказа') #TODO календарь
     operating_time = models.FloatField(verbose_name='Наработка, м/час')
-    failure_node = models.OneToOneField(FailureNode, verbose_name='Узел отказа', on_delete=models.CASCADE)
+    failure_node = models.ForeignKey(FailureNode, verbose_name='Узел отказа', on_delete=models.CASCADE)
     failure_description = models.TextField(verbose_name='Описание отказа')
-    recovery_method = models.OneToOneField(RecoveryMethod, verbose_name='Способ восстановления', on_delete=models.CASCADE)
-    spare_parts = models.TextField(verbose_name='Используемые запасные части')
+    recovery_method = models.ForeignKey(RecoveryMethod, verbose_name='Способ восстановления', on_delete=models.CASCADE)
+    spare_parts = models.TextField(verbose_name='Используемые запасные части', null=True, blank=True)
     recovery_date = models.DateField(verbose_name='Дата восстановления') #TODO календарь
-    machine_complaint = models.ForeignKey(Machine, on_delete=models.CASCADE)
+    machine_complaint = models.ForeignKey(Machine, verbose_name='Зав. № машины', on_delete=models.CASCADE)
+    service_company_complaint = models.ForeignKey(ServiceCompany, verbose_name='Сервисная компания', on_delete=models.CASCADE)
 
     def get_absolute_url(self):
         # return f'/to/{self.id}' #TODO переписать на id когда раскину по деталям

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% for m in machines %}
+        <p>{{m.technique_model}}</p>
+        <a href="{% url 'machine_detail' m.id %}">{{ m.number_machine }}</a>
+    {% endfor %}
+</body>
+</html>

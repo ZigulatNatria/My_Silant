@@ -1,14 +1,20 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render
-from django.views.generic import ListView, CreateView, UpdateView
+from django.views.generic import ListView, CreateView, UpdateView, DetailView
 from .models import Machine, TO, Complaint
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from .forms import TOForm, ComplaintForm, MachineForm
 
 # Create your views here.
-
-
 class MachinaListVew(ListView):
+    model = Machine
+    context_object_name = 'machines'
+    template_name = 'machine_list.html'
+    queryset = Machine.objects.all()
+
+
+
+class MachinaDetailVew(DetailView):
     model = Machine
     context_object_name = 'machine'
     template_name = 'machine.html'
