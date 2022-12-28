@@ -92,3 +92,18 @@ class MachineUpdateView(PermissionRequiredMixin, UpdateView):
     def get_object(self, **kwargs):
         id = self.kwargs.get('pk')
         return Machine.objects.get(pk=id)
+
+
+def search(request):
+    search_query = request.GET.get('search', '') # передаётся имя ввода (строка поиска)
+
+# если значение search_query существует (в строку поиска введён текст) ищем в нужных полях введённый текст
+    if search_query:
+        machine = Machine.objects.filter(number_machine__icontains=search_query) #TODO доделать поиск
+    else:
+        machine = Machine.objects.all()
+    context = {'machine': machine}
+    return render(request, 'search.html', context)
+
+def hello(request):
+    return render(request, 'base.html')
