@@ -93,17 +93,31 @@ class MachineUpdateView(PermissionRequiredMixin, UpdateView):
         id = self.kwargs.get('pk')
         return Machine.objects.get(pk=id)
 
+class SearchMachines(ListView):
+    model = Machine
+    template_name = 'search.html'
+    context_object_name = 'machine'
 
-def search(request):
-    search_query = request.GET.get('search', '') # передаётся имя ввода (строка поиска)
+    # Функция поиска
+    def get_queryset(self, **kwargs):
+        search_query = self.request.GET.get('search', '') # Получаем данные из запроса (search)
+        if search_query:   # Если данные есть (search==True)
+            machine = Machine.objects.filter(number_machine__icontains=search_query) # Фильтруем по данным из search
+            if not machine.exists():  # Если в таблице базы таких данных нет, то присваиваем строке значение о том что их нет )))
+                machine = 'К сожалению ничего не найдено :('
+        else:   # Если данных для поиска нет (search==Fulse)
+            machine = 'К сожалению ничего не найдено :('
+        context = machine
+        return context
 
-# если значение search_query существует (в строку поиска введён текст) ищем в нужных полях введённый текст
-    if search_query:
-        machine = Machine.objects.filter(number_machine__icontains=search_query) #TODO доделать поиск
-    else:
-        machine = Machine.objects.all()
-    context = {'machine': machine}
-    return render(request, 'search.html', context)
+    # Функция проверки является ил пользователь авторизованным
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_aut'] = self.request.user.groups.exists()
+        return context
 
-def hello(request):
+
+
+
+def hello(request): #TODO убрать!!!
     return render(request, 'base.html')

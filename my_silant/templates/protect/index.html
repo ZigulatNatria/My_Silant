@@ -1,14 +1,10 @@
 <!DOCTYPE html>
+{% extends 'base.html' %}
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
 <body>
+{% block content %}
 <h2>Добро пожаловать! {{request.user.username}}</h2>
 <button> <a href="sign/logout/">Выйти</a> </button>
-{% if is_aut %}
-<p>хуй</p>
-{% endif %}
+{% endblock content %}
 </body>
 </html>

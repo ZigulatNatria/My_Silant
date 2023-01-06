@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import MachinaListVew, TOListVew, ComplaintListVew, TOCreateVew, ComplaintCreateVew,\
-    MachineCreateVew, TOUpdateView, ComplaintUpdateView, MachineUpdateView, MachinaDetailVew, search, hello
+    MachineCreateVew, TOUpdateView, ComplaintUpdateView, MachineUpdateView, MachinaDetailVew, SearchMachines, hello
 from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
@@ -14,7 +14,7 @@ urlpatterns = [
     path('<int:pk>/cedit', ComplaintUpdateView.as_view(), name='complaint_create'),
     path('<int:pk>/medit', MachineUpdateView.as_view(), name='machine_create'),
     path('<int:pk>', MachinaDetailVew.as_view(), name='machine_detail'),
-    path('hello/', hello, name='hello'),
-    path('search/', search, name='search'),
+    path('hello/', hello, name='hello'), #TODO убрать !!!!
+    path('search/', SearchMachines.as_view(), name='search'),
 
 ]
