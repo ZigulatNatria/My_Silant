@@ -114,7 +114,7 @@ class TO(models.Model):
     work_order_number = models.TextField(verbose_name='№ заказ-наряда')
     work_order_date = models.DateField(verbose_name='дата заказ-наряда')  # TODO календарь
     company_make_service = models.ForeignKey(ServiceCompany, verbose_name='Сервисная компания', on_delete=models.CASCADE)
-    # company_make_service = models.TextField(verbose_name='Организация, проводившая ТО') #TODO добавить справочник
+    # company_make_service = models.TextField(verbose_name='Организация, проводившая ТО') #TODO Удалить!!!
     machine_to = models.ForeignKey(Machine, verbose_name='Зав. № машины', on_delete=models.CASCADE)
 
     def get_absolute_url(self):

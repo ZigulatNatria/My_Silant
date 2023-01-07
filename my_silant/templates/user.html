@@ -46,24 +46,41 @@
     </span>
   </div>
   <div class="line">
-    <form action="{% url 'search' %}">
-      <div class="form_line">
-        <div class="input">
-          <input type="text" placeholder="Заводской номер" name="search">
-          <span>Например: ABC-00000776-7834534-67</span>
-        </div>
-        <input type="submit" value="Найти">
-      </div>
-    </form>
-  </div>
-  <div class="line">
     <div class="column">
       <div class="search_result">
+        {% if is_aut %}
+        <div class="result_info">
+          <span>Добро пожаловать! {{request.user.first_name}}</span>
+        </div>
         <div class="result_info">
           <span>Информация о коплектации и технических характеристиках вашей техники</span>
         </div>
         <div class="result_collection">
-          {% if machine != 'К сожалению ничего не найдено :('%}
+          <div class="tabs">
+            <a href="/user/">
+            <div class="tab active">
+              <span>
+                Общая информация
+              </span>
+            </div>
+            </a>
+            <a href="/to/">
+              <div class="tab">
+              <span>
+                ТО
+              </span>
+            </div>
+            </a>
+            <a href="/complaint/">
+            <div class="tab">
+              <span>
+                Рекламации
+              </span>
+            </div>
+            </a>
+          </div>
+        </div>
+        <div class="result_collection">
           <table>
             <tbody><tr>
               <th class="nam left">Зав. № машины</th>
@@ -76,6 +93,7 @@
               <th class="nam left">Зав. № ведущего моста</th>
               <th class="nam left">Модель управляемого моста</th>
               <th class="nam left">Зав. № управляемого моста</th>
+              <th class="nam left">Детали</th>
             </tr>
             {% for m in machine %}
             <tr>
@@ -89,14 +107,31 @@
               <td class="nam left">{{m.drive_axle_number}}</td>
               <td class="nam left">{{m.steering_bridge_model}}</td>
               <td class="nam left">{{m.steering_bridge_number}}</td>
+              <td class="nam left">
+                <div class="tabs">
+                  <a href="{% url 'machine_detail' m.pk %}">
+                    <div class="tab">
+                      <span>
+                        детали
+                      </span>
+                    </div>
+                  </a>
+                </div>
+              </td>
             </tr>
             {% endfor %}
           </tbody></table>
-          {% endif %}
-          {% if machine == 'К сожалению ничего не найдено :(' %}
+          {% if machine == 'К сожалению Ваша техника отсутствует в базе :(' %}
           <div class="search_result empty_result">
             <span>
               {{ machine }}
+            </span>
+          </div>
+          {% endif %}
+          {% else %}
+          <div class="search_result empty_result">
+            <span>
+              Авторизуйтесь
             </span>
           </div>
           {% endif %}
