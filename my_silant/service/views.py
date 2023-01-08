@@ -2,11 +2,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import AbstractUser
 from django.shortcuts import redirect, render
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
-from .models import Machine, TO, Complaint, ServiceCompany
+from .models import Machine, TO, Complaint, ServiceCompany, TechniqueModel, EngineModel, TransmissionModel, \
+    DriveAxleModel, SteeringBridgeModel, ServiceType, FailureNode, RecoveryMethod
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from .forms import TOForm, ComplaintForm, MachineForm
-from .filters import MachineFilter, TOFilter, ComplaintFilter
-
+from .filters import MachineFilter, TOFilter, ComplaintFilter, ServiceCompanyFilter
+from .filters import *
 # Create your views here.
 # class MachinaListVew(ListView):
 #     model = Machine
@@ -53,7 +54,6 @@ class ComplaintListVew(LoginRequiredMixin, ListView):
 class TOCreateVew(PermissionRequiredMixin, CreateView):
     permission_required = (
         'service.add_to',
-        'service.delete_to',
     )
     template_name = 'to_create.html'
     form_class = TOForm
@@ -62,7 +62,6 @@ class TOCreateVew(PermissionRequiredMixin, CreateView):
 class ComplaintCreateVew(PermissionRequiredMixin, CreateView):
     permission_required = (
         'service.add_complaint',
-        'service.delete_complaint',
     )
     template_name = 'complaint_create.html'
     form_class = ComplaintForm
@@ -70,7 +69,6 @@ class ComplaintCreateVew(PermissionRequiredMixin, CreateView):
 class MachineCreateVew(PermissionRequiredMixin, CreateView):
     permission_required = (
         'service.add_machine',
-        'service.delete_machine',
     )
     template_name = 'machine_create.html'
     form_class = MachineForm
@@ -105,18 +103,21 @@ class MachineUpdateView(PermissionRequiredMixin, UpdateView):
         return Machine.objects.get(pk=id)
 
 
-# Представления для удаления данных TODO допилить разделение прав
-class MachineDeleteView(DeleteView):
+# Представления для удаления данных
+class MachineDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = ('service.delete_machine',)
     template_name = 'delete_machine.html'
     queryset = Machine.objects.all()
     success_url = '/user/'
 
-class TODeleteView(DeleteView):
+class TODeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = ('service.delete_to',)
     template_name = 'delete_to.html'
     queryset = TO.objects.all()
     success_url = '/to/'
 
-class ComplaintDeleteView(DeleteView):
+class ComplaintDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = ('service.delete_complaint',)
     template_name = 'delete_complaint.html'
     queryset = Complaint.objects.all()
     success_url = '/complaint/'
@@ -222,7 +223,115 @@ def machine_detail(request, machine_id):
         context = {'machine': machine}
     return render(request, 'machine_detail.html', context)
 
-# Фильтры
+# Списки
+# Получение списков
+class ServiceCompanyListView(ListView):
+    model = ServiceCompany
+    context_object_name = 'servicecompany'
+    template_name = 'lists/servicecompany_list.html'
+    queryset = ServiceCompany.objects.all()
+
+    def get_context_data(self, **kwargs):  # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (привет, полиморфизм, мы скучали!!!)
+        context = super().get_context_data(**kwargs)
+        context['filter'] = ServiceCompanyFilter(self.request.GET, queryset=self.get_queryset())  # вписываем наш фильтр в контекст
+        return context
+
+
+class TechniqueModelListView(ListView):
+    model = TechniqueModel
+    context_object_name = 'techniquemodel'
+    template_name = 'lists/techniquemodel_list.html'
+    queryset = TechniqueModel.objects.all()
+
+    def get_context_data(self, **kwargs):  # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (привет, полиморфизм, мы скучали!!!)
+        context = super().get_context_data(**kwargs)
+        context['filter'] = TechniqueModelFilter(self.request.GET, queryset=self.get_queryset())  # вписываем наш фильтр в контекст
+        return context
+
+
+class EngineModelListView(ListView):
+    model = EngineModel
+    context_object_name = 'enginemodel'
+    template_name = 'lists/enginemodel_list.html'
+    queryset = EngineModel.objects.all()
+
+    def get_context_data(self, **kwargs):  # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (привет, полиморфизм, мы скучали!!!)
+        context = super().get_context_data(**kwargs)
+        context['filter'] = EngineModelFilter(self.request.GET, queryset=self.get_queryset())  # вписываем наш фильтр в контекст
+        return context
+
+
+class TransmissionModelListView(ListView):
+    model = TransmissionModel
+    context_object_name = 'transmissionmodel'
+    template_name = 'lists/transmissionmodel_list.html'
+    queryset = TransmissionModel.objects.all()
+
+    def get_context_data(self, **kwargs):  # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (привет, полиморфизм, мы скучали!!!)
+        context = super().get_context_data(**kwargs)
+        context['filter'] = TransmissionModelFilter(self.request.GET, queryset=self.get_queryset())  # вписываем наш фильтр в контекст
+        return context
+
+
+class DriveAxleModelListView(ListView):
+    model = DriveAxleModel
+    context_object_name = 'driveaxlemodel'
+    template_name = 'lists/driveaxlemodel_list.html'
+    queryset = DriveAxleModel.objects.all()
+
+    def get_context_data(self, **kwargs):  # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (привет, полиморфизм, мы скучали!!!)
+        context = super().get_context_data(**kwargs)
+        context['filter'] = DriveAxleModelFilter(self.request.GET, queryset=self.get_queryset())  # вписываем наш фильтр в контекст
+        return context
+
+
+class SteeringBridgeModelListView(ListView):
+    model = SteeringBridgeModel
+    context_object_name = 'steeringbridgemodel'
+    template_name = 'lists/steeringbridgemodel_list.html'
+    queryset = SteeringBridgeModel.objects.all()
+
+    def get_context_data(self, **kwargs):  # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (привет, полиморфизм, мы скучали!!!)
+        context = super().get_context_data(**kwargs)
+        context['filter'] = SteeringBridgeModelFilter(self.request.GET, queryset=self.get_queryset())  # вписываем наш фильтр в контекст
+        return context
+
+
+class ServiceTypeListView(ListView):
+    model = ServiceType
+    context_object_name = 'servicetype'
+    template_name = 'lists/servicetype_list.html'
+    queryset = ServiceType.objects.all()
+
+    def get_context_data(self, **kwargs):  # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (привет, полиморфизм, мы скучали!!!)
+        context = super().get_context_data(**kwargs)
+        context['filter'] = ServiceTypeFilter(self.request.GET, queryset=self.get_queryset())  # вписываем наш фильтр в контекст
+        return context
+
+
+class FailureNodeListView(ListView):
+    model = FailureNode
+    context_object_name = 'failurenode'
+    template_name = 'lists/failurenode_list.html'
+    queryset = FailureNode.objects.all()
+
+    def get_context_data(self, **kwargs):  # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (привет, полиморфизм, мы скучали!!!)
+        context = super().get_context_data(**kwargs)
+        context['filter'] = FailureNodeFilter(self.request.GET, queryset=self.get_queryset())  # вписываем наш фильтр в контекст
+        return context
+
+
+class RecoveryMethodListView(ListView):
+    model = RecoveryMethod
+    context_object_name = 'recoverymethod'
+    template_name = 'lists/recoverymethod_list.html'
+    queryset = RecoveryMethod.objects.all()
+
+    def get_context_data(self, **kwargs):  # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (привет, полиморфизм, мы скучали!!!)
+        context = super().get_context_data(**kwargs)
+        context['filter'] = RecoveryMethodFilter(self.request.GET, queryset=self.get_queryset())  # вписываем наш фильтр в контекст
+        return context
+
 
 def hello(request): #TODO убрать!!!
     return render(request, 'base.html')

@@ -2,7 +2,10 @@ from django.urls import path
 from .views import TOListVew, ComplaintListVew, TOCreateVew, ComplaintCreateVew,\
     MachineCreateVew, TOUpdateView, ComplaintUpdateView, MachineUpdateView, MachineDeleteView, \
     SearchMachines, hello, by_user_machine, to_detail, complaint_detail, \
-    machine_detail, TODeleteView, ComplaintDeleteView, complaint_list_machine, to_list_machine
+    machine_detail, TODeleteView, ComplaintDeleteView, complaint_list_machine, to_list_machine, \
+    ServiceCompanyListView, TechniqueModelListView, EngineModelListView, TransmissionModelListView, \
+    DriveAxleModelListView, SteeringBridgeModelListView, ServiceTypeListView, FailureNodeListView, \
+    RecoveryMethodListView
 from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
@@ -29,5 +32,15 @@ urlpatterns = [
     path('deleteсo/<int:pk>/', ComplaintDeleteView.as_view(), name='complaint_delete'),
     path('complaintlist/<int:machine_id>/', complaint_list_machine, name='complaint_list'),
     path('tolist/<int:machine_id>/', to_list_machine, name='to_list'),
+    #Списки списков )))))
+    path('servisecomp/', ServiceCompanyListView.as_view(), name='servisecomp'),
+    path('modeltech/', TechniqueModelListView.as_view(), name='modeltech'),
+    path('modeleng/', EngineModelListView.as_view(), name='modeleng'),
+    path('modeltrans/', TransmissionModelListView.as_view(), name='modeltrans'),
+    path('modelaxel/', DriveAxleModelListView.as_view(), name='modelaxel'),
+    path('modelsteer/', SteeringBridgeModelListView.as_view(), name='modelsteer'),
+    path('servisetype/', ServiceTypeListView.as_view(), name='servisetype'),
+    path('fnode/', FailureNodeListView.as_view(), name='fnode'),
+    path('reco/', RecoveryMethodListView.as_view(), name='reco'),
 
 ]
