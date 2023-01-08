@@ -1,42 +1,52 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import AbstractUser
 from django.shortcuts import redirect, render
-from django.views.generic import ListView, CreateView, UpdateView, DetailView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from .models import Machine, TO, Complaint, ServiceCompany
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from .forms import TOForm, ComplaintForm, MachineForm
+from .filters import MachineFilter, TOFilter, ComplaintFilter
 
 # Create your views here.
-class MachinaListVew(ListView):
-    model = Machine
-    context_object_name = 'machines'
-    template_name = 'machine_list.html'
-    queryset = Machine.objects.all()
+# class MachinaListVew(ListView):
+#     model = Machine
+#     context_object_name = 'machines'
+#     template_name = 'machine_list.html'
+#     queryset = Machine.objects.all()
+#
+#
+#
+# class MachinaDetailVew(DetailView):
+#     model = Machine
+#     context_object_name = 'machine'
+#     template_name = 'machine.html'
+#     queryset = Machine.objects.all()
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['is_aut'] = self.request.user.groups.exists()
+#         return context
 
 
-
-class MachinaDetailVew(DetailView):
-    model = Machine
-    context_object_name = 'machine'
-    template_name = 'machine.html'
-    queryset = Machine.objects.all()
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['is_aut'] = self.request.user.groups.exists()
-        return context
-
-
-class TOListVew(ListView):
+class TOListVew(LoginRequiredMixin, ListView):
     model = TO
-    context_object_name = 'to'
     template_name = 'to.html'
+
+    def get_context_data(self, **kwargs):  # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (привет, полиморфизм, мы скучали!!!)
+        context = super().get_context_data(**kwargs)
+        context['filter'] = TOFilter(self.request.GET, queryset=self.get_queryset())  # вписываем наш фильтр в контекст
+        return context
 
 
 class ComplaintListVew(LoginRequiredMixin, ListView):
     model = Complaint
     context_object_name = 'complaint'
     template_name = 'complaint.html'
+
+    def get_context_data(self, **kwargs):  # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (привет, полиморфизм, мы скучали!!!)
+        context = super().get_context_data(**kwargs)
+        context['filter'] = ComplaintFilter(self.request.GET, queryset=self.get_queryset())  # вписываем наш фильтр в контекст
+        return context
 
 
 #Представления для создания TO, Complaint, Machine
@@ -94,6 +104,24 @@ class MachineUpdateView(PermissionRequiredMixin, UpdateView):
         id = self.kwargs.get('pk')
         return Machine.objects.get(pk=id)
 
+
+# Представления для удаления данных TODO допилить разделение прав
+class MachineDeleteView(DeleteView):
+    template_name = 'delete_machine.html'
+    queryset = Machine.objects.all()
+    success_url = '/user/'
+
+class TODeleteView(DeleteView):
+    template_name = 'delete_to.html'
+    queryset = TO.objects.all()
+    success_url = '/to/'
+
+class ComplaintDeleteView(DeleteView):
+    template_name = 'delete_complaint.html'
+    queryset = Complaint.objects.all()
+    success_url = '/complaint/'
+
+
 class SearchMachines(ListView):
     model = Machine
     template_name = 'search.html'
@@ -121,6 +149,7 @@ class SearchMachines(ListView):
 # функция фильтрации по авторизованному пользователю
 def by_user_machine(request):
     is_aut = request.user.groups.exists()   # Проверка зарегистрировани ли пользователь
+    filter = MachineFilter(request.GET) # Фильтрация перебила всю красоту (((((
     if is_aut:   # Если пользователь зарегистрирован
         machine = Machine.objects.filter(client=request.user.first_name) # Фильтруем все строки по полю клиент, если он является пользователем совершающим запрос
         if not machine.exists(): # Если пользователь не является клиентом проверяем является ли он сервисной компанией
@@ -130,84 +159,58 @@ def by_user_machine(request):
                 machine = Machine.objects.filter(service_company=service.id) # По id фильтруем все строки по полю сервисной компании
             else:
                 machine = 'К сожалению Ваша техника отсутствует в базе :('
-        context = {'machine': machine, 'is_aut': is_aut}
+        context = {'machine': machine, 'is_aut': is_aut, 'filter': filter}
     else:
         machine = 'Авторизуйся'
         context = {'machine': machine}
     return render (request, 'user.html', context)
 
 
-def by_user_to(request):
-    is_aut = request.user.groups.exists()   # Проверка зарегистрировани ли пользователь
-    if is_aut:   # Если пользователь зарегистрирован
-        machine = Machine.objects.filter(client=request.user.first_name) # Фильтруем все строки по полю клиент, если он является пользователем совершающим запрос
-        if not machine.exists(): # Если пользователь не является клиентом проверяем является ли он сервисной компанией
-            servicelist = ServiceCompany.objects.filter(name=request.user.first_name) # Проверяем есть ли в списке сервисных компаний запись с именм пользователя (сервисная компания)
-            if servicelist.exists(): # Если сервисная компания есть в базе идём далее
-                service = ServiceCompany.objects.get(name=request.user.first_name) # Т.к. поле сервисной компании в модели Machine является связанным для начала получаем его id
-                machine = Machine.objects.filter(service_company=service.id) # По id фильтруем все строки по полю сервисной компании
-            else:
-                to = 'Нет данных по ТО'
-        if machine.exists(): # Если machine==True (тобишь у пользователя есть ТО в базе)
-            for m in machine:
-                m.number_machine = machine.filter(id__in=m.number_machine) # Получаем все номера машин связанных с пользователем
-                # to = TO.objects.filter(machine_to=m)
-                to = m.number_machine
-
-            context = {'to': to, 'is_aut': is_aut}
-        context = {'to': to, 'is_aut': is_aut}
-    else:
-        to = 'Авторизуйся'
-        context = {'to': to}
-    return render (request, 'to.html', context)
-
-
-def by_user_complaint(request):
-    is_aut = request.user.groups.exists()   # Проверка зарегистрировани ли пользователь
-    if is_aut:   # Если пользователь зарегистрирован
-        machine = Machine.objects.filter(client=request.user.first_name) # Фильтруем все строки по полю клиент, если он является пользователем совершающим запрос
-        if not machine.exists(): # Если пользователь не является клиентом проверяем является ли он сервисной компанией
-            servicelist = ServiceCompany.objects.filter(name=request.user.first_name) # Проверяем есть ли в списке сервисных компаний запись с именм пользователя (сервисная компания)
-            if servicelist.exists(): # Если сервисная компания есть в базе идём далее
-                service = ServiceCompany.objects.get(name=request.user.first_name) # Т.к. поле сервисной компании в модели Machine является связанным для начала получаем его id
-                machine = Machine.objects.filter(service_company=service.id) # По id фильтруем все строки по полю сервисной компании
-            else:
-                complaint = 'Нет данных о рекламациях'
-        if machine.exists(): # Если machine==True (тобишь у пользователя есть ТО в базе)
-            for m in machine:
-                m.number_machine = machine.filter(id__in=m.number_machine) # Получаем все номера машин связанных с пользователем
-                # to = TO.objects.filter(machine_to=m)
-                complaint = m.number_machine
-
-            context = {'complaint': complaint, 'is_aut': is_aut}
-        context = {'complaint': complaint, 'is_aut': is_aut}
-    else:
-        complaint = 'Авторизуйтесь'
-        context = {'complaint': complaint}
-    return render (request, 'complaint.html', context)
-
-
-def to_detail(request, machine_id):
+def to_detail(request, to_id):
     is_aut = request.user.groups.exists()
     if is_aut:
-        to_d = TO.objects.filter(machine_to=machine_id)
-        machine = Machine.objects.get(pk=machine_id)
+        to_d = TO.objects.get(pk=to_id)
+        machine = Machine.objects.get(number_machine=to_d.machine_to)
         context = {'to_d': to_d, 'machine': machine, 'is_aut': is_aut}
     else:
         to_d = 'Авторизуйтесь'
         context = {'to_d': to_d}
     return render(request, 'to_detail.html', context)
 
-def complaint_detail(request, machine_id):
+def complaint_detail(request, complaint_id):
     is_aut = request.user.groups.exists()
     if is_aut:
-        complaint_d = Complaint.objects.filter(machine_complaint=machine_id)
-        machine = Machine.objects.get(pk=machine_id)
+        complaint_d = Complaint.objects.get(pk=complaint_id)
+        machine = Machine.objects.get(number_machine=complaint_d.machine_complaint)
         context = {'complaint_d': complaint_d, 'machine': machine, 'is_aut': is_aut}
     else:
         complaint_d = 'Авторизуйтесь'
         context = {'complaint_d': complaint_d}
     return render(request, 'complaint_detail.html', context)
+
+def complaint_list_machine(request, machine_id): # Вывод всех рекламаций связанных с выбранной машиной
+    is_aut = request.user.groups.exists()
+    if is_aut:
+        complaint_list = Complaint.objects.filter(machine_complaint=machine_id)
+        machine = Machine.objects.get(pk=machine_id)
+        context = {'complaint_list': complaint_list, 'machine': machine, 'is_aut': is_aut}
+    else:
+        complaint_list = 'Авторизуйтесь'
+        context = {'complaint_list': complaint_list}
+    return render(request, 'complaint_list_machine.html', context)
+
+
+def to_list_machine(request, machine_id): # Вывод всех ТО связанных с выбранной машиной
+    is_aut = request.user.groups.exists()
+    if is_aut:
+        to_list = TO.objects.filter(machine_to=machine_id)
+        machine = Machine.objects.get(pk=machine_id)
+        context = {'to_list': to_list, 'machine': machine, 'is_aut': is_aut}
+    else:
+        to_list = 'Авторизуйтесь'
+        context = {'to_list': to_list}
+    return render(request, 'to_list_machine.html', context)
+
 
 def machine_detail(request, machine_id):
     is_aut = request.user.groups.exists()
@@ -219,6 +222,7 @@ def machine_detail(request, machine_id):
         context = {'machine': machine}
     return render(request, 'machine_detail.html', context)
 
+# Фильтры
 
 def hello(request): #TODO убрать!!!
     return render(request, 'base.html')

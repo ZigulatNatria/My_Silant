@@ -42,56 +42,30 @@
         <section>
   <div class="line">
     <span class="title">
-      Проверьте комплектацию и технические характеристики техники Силант
+      Общая информация
     </span>
   </div>
   <div class="line">
-      <div class="search_result">
-      <div class="result_info">
-        <div class="result_collection">
-            <form method="GET">
-              {{ filter.form }}
-                <div class="tabs">
-                <input class="tab" type="submit" value="Фильтр">
-                </div>
-            </form>
-      </div>
-    </div>
-  </div>
     <div class="column">
       <div class="search_result">
-        {% if is_aut %}
         <div class="result_info">
           <span>Добро пожаловать! {{request.user.first_name}}</span>
         </div>
         <div class="result_info">
-          <span>Информация о коплектации и технических характеристиках вашей техники</span>
+          <span>Вы действительно хотите удалить технику?</span>
         </div>
-        <div class="result_collection">
-          <div class="tabs">
-            <a href="/user/">
-            <div class="tab active">
-              <span>
-                Общая информация
-              </span>
-            </div>
-            </a>
-            <a href="/to/">
-              <div class="tab">
-              <span>
-                ТО
-              </span>
-            </div>
-            </a>
-            <a href="/complaint/">
-            <div class="tab">
-              <span>
-                Рекламации
-              </span>
-            </div>
-            </a>
+        <div class="search_result">
+        <div class="result_info">
+          <div class="machine">
+            <span>
+              Модель техники {{machine.technique_model}}
+            </span>
+            <span>
+              Заводской номер техники {{machine.number_machine}}
+            </span>
           </div>
         </div>
+      </div>
         <div class="result_collection">
           <table>
             <tbody><tr>
@@ -105,48 +79,43 @@
               <th class="nam left">Зав. № ведущего моста</th>
               <th class="nam left">Модель управляемого моста</th>
               <th class="nam left">Зав. № управляемого моста</th>
-              <th class="nam left">Детали</th>
+              <th class="nam left">Договор поставки №, дата</th>
+              <th class="nam left">Дата отгрузки с завода</th>
+              <th class="nam left">Грузополучатель (конечный потребитель)</th>
+              <th class="nam left">Адрес поставки (эксплуатации)</th>
+              <th class="nam left">Комплектация (доп. опции)</th>
+              <th class="nam left">Клиент</th>
+              <th class="nam left">Сервисная компания</th>
             </tr>
-            {% for m in filter.qs %}
-            <tr id="myUL">
-              <td class="nam left">{{m.number_machine}}</td>
-              <td class="nam left">{{m.technique_model}}</td>
-              <td class="nam left">{{m.engine_model}}</td>
-              <td class="nam left">{{m.engine_number}}</td>
-              <td class="nam left">{{m.transmission_model}}</td>
-              <td class="nam left">{{m.transmission_number}}</td>
-              <td class="nam left">{{m.drive_axle_model}}</td>
-              <td class="nam left">{{m.drive_axle_number}}</td>
-              <td class="nam left">{{m.steering_bridge_model}}</td>
-              <td class="nam left">{{m.steering_bridge_number}}</td>
-              <td class="nam left">
-                <div class="tabs">
-                  <a href="{% url 'machine_detail' m.pk %}">
-                    <div class="tab active">
-                      <span>
-                        <div class="smalltext">детали</div>
-                      </span>
-                    </div>
-                  </a>
-                </div>
+            <tr>
+              <td class="nam left">{{machine.number_machine}}</td>
+              <td class="nam left">{{machine.technique_model}}</td>
+              <td class="nam left">{{machine.engine_model}}</td>
+              <td class="nam left">{{machine.engine_number}}</td>
+              <td class="nam left">{{machine.transmission_model}}</td>
+              <td class="nam left">{{machine.transmission_number}}</td>
+              <td class="nam left">{{machine.drive_axle_model}}</td>
+              <td class="nam left">{{machine.drive_axle_number}}</td>
+              <td class="nam left">{{machine.steering_bridge_model}}</td>
+              <td class="nam left">{{machine.steering_bridge_number}}</td>
+              <td class="nam left">{{machine.supply_contract}}</td>
+              <td class="nam left">{{machine.shipping_date}}</td>
+              <td class="nam left">{{machine.consignee}}</td>
+              <td class="nam left">{{machine.delivery_address}}</td>
+              <td class="nam left">{{machine.equipment}}</td>
+              <td class="nam left">{{machine.client}}</td>
+              <td class="nam left">{{machine.service_company}}</td>
               </td>
             </tr>
-            {% endfor %}
           </tbody></table>
-          {% if machine == 'К сожалению Ваша техника отсутствует в базе :(' %}
-          <div class="search_result empty_result">
-            <span>
-              {{ machine }}
-            </span>
-          </div>
-          {% endif %}
-          {% else %}
-          <div class="search_result empty_result">
-            <span>
-              Авторизуйтесь
-            </span>
-          </div>
-          {% endif %}
+          <div class="tabs">
+                    <div class="tabs">
+                        <form method="POST">
+                        {% csrf_token %}
+                        <input class="tab" type="submit" value="подтвердить">
+                        </form>
+                    </div>
+                </div>
         </div>
       </div>
         {% endblock content %}

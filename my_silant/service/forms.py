@@ -29,6 +29,7 @@ class ComplaintForm(ModelForm):
             'spare_parts',
             'recovery_date',
             'machine_complaint',
+            'service_company_complaint',
         ]
 
 class MachineForm(ModelForm):

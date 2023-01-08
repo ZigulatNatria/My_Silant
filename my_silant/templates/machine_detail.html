@@ -76,14 +76,14 @@
               </span>
             </div>
             </a>
-            <a href="{% url 'to_detail' machine.pk %}">
+            <a href="{% url 'to_list' machine.pk %}">
               <div class="tab">
               <span>
                 ТО
               </span>
             </div>
             </a>
-            <a href="{% url 'complaint_detail' machine.pk %}">
+            <a href="{% url 'complaint_list' machine.pk %}">
             <div class="tab">
               <span>
                 Рекламации
@@ -112,6 +112,8 @@
               <th class="nam left">Комплектация (доп. опции)</th>
               <th class="nam left">Клиент</th>
               <th class="nam left">Сервисная компания</th>
+              <th class="nam left">Изменить</th>
+              <th class="nam left">Удалить</th>
             </tr>
             <tr>
               <td class="nam left">{{machine.number_machine}}</td>
@@ -131,8 +133,39 @@
               <td class="nam left">{{machine.equipment}}</td>
               <td class="nam left">{{machine.client}}</td>
               <td class="nam left">{{machine.service_company}}</td>
+              <td class="nam left">
+                <div class="tabs">
+                  <a href="{% url 'machine_update' machine.pk %}">
+                    <div class="tab active">
+                      <span>
+                        <div class="smalltext">Изменить</div>
+                      </span>
+                    </div>
+                  </a>
+                </div>
+              </td>
+              <td class="nam left">
+                <div class="tabs">
+                  <a href="{% url 'machine_delete' machine.pk %}">
+                    <div class="tab active">
+                      <span>
+                        <div class="smalltext">Удалить</div>
+                      </span>
+                    </div>
+                  </a>
+                </div>
+              </td>
             </tr>
           </tbody></table>
+          <div class="tabs">
+                  <a href="{% url 'machine_create' %}">
+                    <div class="tab">
+                      <span>
+                        Добавить технику
+                      </span>
+                    </div>
+                  </a>
+                </div>
           {% else %}
           <div class="search_result empty_result">
             <span>

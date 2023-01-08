@@ -36,6 +36,10 @@
   --basic-border-color: #ccc;
 }
 
+.smalltext{
+    font-size: 10px;
+}
+
 /* line 41, app/assets/stylesheets/all_pages.scss */
 * {
   padding: 0;
@@ -408,8 +412,8 @@ footer {
 
 /* line 311, app/assets/stylesheets/all_pages.scss */
 #content section .search_result .result_collection table tr td.dat, #content section .search_result .result_collection table tr th.dat {
-  min-width: 80px;
-  max-width: 180px;
+  min-width: 10px;
+  max-width: 10px;
 }
 
 @media (min-width: 1px) and (max-width: 640px) {

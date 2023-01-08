@@ -75,14 +75,14 @@
               </span>
             </div>
             </a>
-            <a href="{% url 'to_detail' machine.pk %}">
+            <a href="{% url 'to_list' machine.pk %}">
               <div class="tab active">
               <span>
                 ТО
               </span>
             </div>
             </a>
-            <a href="{% url 'complaint_detail' machine.pk %}">
+            <a href="{% url 'complaint_list' machine.pk %}">
             <div class="tab">
               <span>
                 Рекламации
@@ -101,19 +101,50 @@
               <th class="nam left">дата заказ-наряда</th>
               <th class="nam left">Сервисная компания</th>
               <th class="nam left">Зав. № машины</th>
+              <th class="nam left">Изменить</th>
+              <th class="nam left">Удалить</th>
             <tr>
-              {% for t in to_d %}
-              <td class="nam left">{{t.service_type}}</td>
-              <td class="nam left">{{t.service_date}}</td>
-              <td class="nam left">{{t.operating_time}}</td>
-              <td class="nam left">{{t.work_order_number}}</td>
-              <td class="nam left">{{t.work_order_date}}</td>
-              <td class="nam left">{{t.company_make_service}}</td>
-              <td class="nam left">{{t.machine_to}}</td>
+              <td class="nam left">{{to_d.service_type}}</td>
+              <td class="nam left">{{to_d.service_date}}</td>
+              <td class="nam left">{{to_d.operating_time}}</td>
+              <td class="nam left">{{to_d.work_order_number}}</td>
+              <td class="nam left">{{to_d.work_order_date}}</td>
+              <td class="nam left">{{to_d.company_make_service}}</td>
+              <td class="nam left">{{to_d.machine_to}}</td>
+              <td class="nam left">
+                <div class="tabs">
+                  <a href="{% url 'to_update' to_d.pk %}">
+                    <div class="tab active">
+                      <span>
+                        <div class="smalltext">Изменить</div>
+                      </span>
+                    </div>
+                  </a>
+                </div>
+              </td>
+              <td class="nam left">
+                <div class="tabs">
+                  <a href="{% url 'to_delete' to_d.pk %}">
+                    <div class="tab active">
+                      <span>
+                        <div class="smalltext">Удалить</div>
+                      </span>
+                    </div>
+                  </a>
+                </div>
+              </td>
             </tr>
             </tr>
-              {% endfor %}
           </tbody></table>
+          <div class="tabs">
+                  <a href="{% url 'to_create' %}">
+                    <div class="tab">
+                      <span>
+                        Добавить ТО
+                      </span>
+                    </div>
+                  </a>
+                </div>
           {% else %}
           <div class="search_result empty_result">
             <span>

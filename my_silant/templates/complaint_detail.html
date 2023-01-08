@@ -104,21 +104,52 @@
               <th class="nam left">Дата восстановления</th>
               <th class="nam left">Зав. № машины</th>
               <th class="nam left">Сервисная компания</th>
+              <th class="nam left">Изменить</th>
+              <th class="nam left">Удалить</th>
             <tr>
-              {% for c in complaint_d %}
-              <td class="nam left">{{c.date_rejection}}</td>
-              <td class="nam left">{{c.operating_time}}</td>
-              <td class="nam left">{{c.failure_node}}</td>
-              <td class="nam left">{{c.failure_description}}</td>
-              <td class="nam left">{{c.recovery_method}}</td>
-              <td class="nam left">{{c.spare_parts}}</td>
-              <td class="nam left">{{c.recovery_date}}</td>
-              <td class="nam left">{{c.machine_complaint}}</td>
-              <td class="nam left">{{c.service_company_complaint}}</td>
+              <td class="nam left">{{complaint_d.date_rejection}}</td>
+              <td class="nam left">{{complaint_d.operating_time}}</td>
+              <td class="nam left">{{complaint_d.failure_node}}</td>
+              <td class="nam left">{{complaint_d.failure_description}}</td>
+              <td class="nam left">{{complaint_d.recovery_method}}</td>
+              <td class="nam left">{{complaint_d.spare_parts}}</td>
+              <td class="nam left">{{complaint_d.recovery_date}}</td>
+              <td class="nam left">{{complaint_d.machine_complaint}}</td>
+              <td class="nam left">{{complaint_d.service_company_complaint}}</td>
+              <td class="nam left">
+                <div class="tabs">
+                  <a href="{% url 'complaint_update' complaint_d.pk %}">
+                    <div class="tab active">
+                      <span>
+                        <div class="smalltext">Изменить</div>
+                      </span>
+                    </div>
+                  </a>
+                </div>
+              </td>
+              <td class="nam left">
+                <div class="tabs">
+                  <a href="{% url 'complaint_delete' complaint_d.pk %}">
+                    <div class="tab active">
+                      <span>
+                        <div class="smalltext">Удалить</div>
+                      </span>
+                    </div>
+                  </a>
+                </div>
+              </td>
             </tr>
             </tr>
-              {% endfor %}
           </tbody></table>
+           <div class="tabs">
+                  <a href="{% url 'complaint_create' %}">
+                    <div class="tab">
+                      <span>
+                        Добавить рекламацию
+                      </span>
+                    </div>
+                  </a>
+                </div>
           {% else %}
           <div class="search_result empty_result">
             <span>

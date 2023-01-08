@@ -42,22 +42,10 @@
         <section>
   <div class="line">
     <span class="title">
-      Проверьте комплектацию и технические характеристики техники Силант
+      Рекламации
     </span>
   </div>
   <div class="line">
-      <div class="search_result">
-      <div class="result_info">
-        <div class="result_collection">
-            <form method="GET">
-              {{ filter.form }}
-                <div class="tabs">
-                <input class="tab" type="submit" value="Фильтр">
-                </div>
-            </form>
-      </div>
-    </div>
-  </div>
     <div class="column">
       <div class="search_result">
         {% if is_aut %}
@@ -65,81 +53,105 @@
           <span>Добро пожаловать! {{request.user.first_name}}</span>
         </div>
         <div class="result_info">
-          <span>Информация о коплектации и технических характеристиках вашей техники</span>
+          <span>Детальная информация по рекламациям вашей техники</span>
         </div>
-        <div class="result_collection">
+        <div class="search_result">
+        <div class="result_info">
+          <div class="machine">
+            <span>
+              Модель техники {{machine.technique_model}}
+            </span>
+            <span>
+              Заводской номер техники {{machine.number_machine}}
+            </span>
+          </div>
+        </div>
+      </div>
+         <div class="result_collection">
           <div class="tabs">
-            <a href="/user/">
-            <div class="tab active">
+            <a href="{% url 'machine_detail' machine.pk %}">
+            <div class="tab">
               <span>
                 Общая информация
               </span>
             </div>
             </a>
-            <a href="/to/">
+            <a href="{% url 'to_detail' machine.pk %}">
               <div class="tab">
               <span>
                 ТО
               </span>
             </div>
             </a>
-            <a href="/complaint/">
-            <div class="tab">
+            <a href="{% url 'complaint_list' machine.pk %}">
+            <div class="tab active">
               <span>
                 Рекламации
               </span>
             </div>
             </a>
           </div>
-        </div>
+         </div>
         <div class="result_collection">
           <table>
             <tbody><tr>
+              <th class="nam left">Дата отказа</th>
+              <th class="nam left">Наработка, м/час</th>
+              <th class="nam left">Узел отказа</th>
+              <th class="nam left">Описание отказа</th>
+              <th class="nam left">Способ восстановления</th>
+              <th class="nam left">Используемые запасные части</th>
+              <th class="nam left">Дата восстановления</th>
               <th class="nam left">Зав. № машины</th>
-              <th class="nam left">Модель техники</th>
-              <th class="nam left">Модель двигателя</th>
-              <th class="nam left">Зав. № двигателя</th>
-              <th class="nam left">Модель трансмиссии</th>
-              <th class="nam left">Зав. № трансмиссии</th>
-              <th class="nam left">Модель ведущего моста</th>
-              <th class="nam left">Зав. № ведущего моста</th>
-              <th class="nam left">Модель управляемого моста</th>
-              <th class="nam left">Зав. № управляемого моста</th>
-              <th class="nam left">Детали</th>
-            </tr>
-            {% for m in filter.qs %}
-            <tr id="myUL">
-              <td class="nam left">{{m.number_machine}}</td>
-              <td class="nam left">{{m.technique_model}}</td>
-              <td class="nam left">{{m.engine_model}}</td>
-              <td class="nam left">{{m.engine_number}}</td>
-              <td class="nam left">{{m.transmission_model}}</td>
-              <td class="nam left">{{m.transmission_number}}</td>
-              <td class="nam left">{{m.drive_axle_model}}</td>
-              <td class="nam left">{{m.drive_axle_number}}</td>
-              <td class="nam left">{{m.steering_bridge_model}}</td>
-              <td class="nam left">{{m.steering_bridge_number}}</td>
+              <th class="nam left">Сервисная компания</th>
+              <th class="nam left">Изменить</th>
+              <th class="nam left">Удалить</th>
+            <tr>
+              {% for complaint in complaint_list %}
+              <td class="nam left">{{complaint.date_rejection}}</td>
+              <td class="nam left">{{complaint.operating_time}}</td>
+              <td class="nam left">{{complaint.failure_node}}</td>
+              <td class="nam left">{{complaint.failure_description}}</td>
+              <td class="nam left">{{complaint.recovery_method}}</td>
+              <td class="nam left">{{complaint.spare_parts}}</td>
+              <td class="nam left">{{complaint.recovery_date}}</td>
+              <td class="nam left">{{complaint.machine_complaint}}</td>
+              <td class="nam left">{{complaint.service_company_complaint}}</td>
               <td class="nam left">
                 <div class="tabs">
-                  <a href="{% url 'machine_detail' m.pk %}">
+                  <a href="{% url 'complaint_update' complaint.pk %}">
                     <div class="tab active">
                       <span>
-                        <div class="smalltext">детали</div>
+                        <div class="smalltext">Изменить</div>
+                      </span>
+                    </div>
+                  </a>
+                </div>
+              </td>
+              <td class="nam left">
+                <div class="tabs">
+                  <a href="{% url 'complaint_delete' complaint.pk %}">
+                    <div class="tab active">
+                      <span>
+                        <div class="smalltext">Удалить</div>
                       </span>
                     </div>
                   </a>
                 </div>
               </td>
             </tr>
+            </tr>
             {% endfor %}
           </tbody></table>
-          {% if machine == 'К сожалению Ваша техника отсутствует в базе :(' %}
-          <div class="search_result empty_result">
-            <span>
-              {{ machine }}
-            </span>
-          </div>
-          {% endif %}
+           <div class="tabs">
+                  <a href="{% url 'complaint_create' %}">
+                    <div class="tab">
+                      <span>
+                        Добавить рекламацию
+                      </span>
+                    </div>
+                  </a>
+                </div>
           {% else %}
           <div class="search_result empty_result">
             <span>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{% extends 'base.html' %}
+
 <!-- saved from url=(0019)http://localhost/?# -->
 <html><script type="text/javascript" src="chrome-extension://kajfghlhfkcocafkcjlajldicbikpgnp/catcher.js"><!-- script injected by Request Maker --></script><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Oleg</title>
@@ -25,7 +25,7 @@
               <span><a href="http://localhost/?#"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 240.1 240.1"><lineargradient id="a" x1="-838.041" x2="-838.041" y1="660.581" y2="660.343" gradientTransform="matrix(1000 0 0 -1000 838161 660581)" gradientUnits="userSpaceOnUse"><stop offset="0" style="stop-color:#2aabee"></stop><stop offset="1" style="stop-color:#229ed9"></stop></lineargradient><circle cx="120.1" cy="120.1" r="120.1" fill="url(#a)" fill-rule="evenodd" clip-rule="evenodd"></circle><path fill="#FFF" fill-rule="evenodd" d="M54.3 118.8c35-15.2 58.3-25.3 70-30.2 33.3-13.9 40.3-16.3 44.8-16.4 1 0 3.2.2 4.7 1.4 1.2 1 1.5 2.3 1.7 3.3s.4 3.1.2 4.7c-1.8 19-9.6 65.1-13.6 86.3-1.7 9-5 12-8.2 12.3-7 .6-12.3-4.6-19-9-10.6-6.9-16.5-11.2-26.8-18-11.9-7.8-4.2-12.1 2.6-19.1 1.8-1.8 32.5-29.8 33.1-32.3.1-.3.1-1.5-.6-2.1-.7-.6-1.7-.4-2.5-.2-1.1.2-17.9 11.4-50.6 33.5-4.8 3.3-9.1 4.9-13 4.8-4.3-.1-12.5-2.4-18.7-4.4-7.5-2.4-13.5-3.7-13-7.9.3-2.2 3.3-4.4 8.9-6.7z" clip-rule="evenodd"></path></svg></a></span>
             </div>
             <div id="auth_widget">
-              <a href="http://localhost/?#"><svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="30" viewBox="0 0 600 600"><circle cx="300" cy="300" r="265"></circle><circle cx="300" cy="230" r="115"></circle><path d="M106.819 481.4a205 205 1 0 1 386.362 0"></path></svg>Авторизация</a>
+              <a href="/sign/logout/"><svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="30" viewBox="0 0 600 600"><circle cx="300" cy="300" r="265"></circle><circle cx="300" cy="230" r="115"></circle><path d="M106.819 481.4a205 205 1 0 1 386.362 0"></path></svg>Выход</a>
             </div>
           </div>
           <div class="line">
@@ -46,9 +46,20 @@
     </span>
   </div>
   <div class="line">
+    <div class="search_result">
+      <div class="result_info">
+        <div class="result_collection">
+            <form method="GET">
+              {{ filter.form }}
+                <div class="tabs">
+                <input class="tab" type="submit" value="Фильтр">
+                </div>
+            </form>
+      </div>
+    </div>
+  </div>
     <div class="column">
       <div class="search_result">
-        {% if is_aut %}
         <div class="result_info">
           <span>Добро пожаловать! {{request.user.first_name}}</span>
         </div>
@@ -81,22 +92,35 @@
           </div>
         </div>
         <div class="result_collection">
-          {% if complaint != 'Нет данных о рекламациях'%}
           <table>
             <tbody><tr>
+              <th class="nam left">Дата отказа</th>
+              <th class="nam left">Наработка, м/час</th>
+              <th class="nam left">Узел отказа</th>
+              <th class="nam left">Описание отказа</th>
+              <th class="nam left">Способ восстановления</th>
+              <th class="nam left">Используемые запасные части</th>
+              <th class="nam left">Дата восстановления</th>
               <th class="nam left">Зав. № машины</th>
-              <th class="nam left">Модель техники</th>
+              <th class="nam left">Сервисная компания</th>
               <th class="nam left">Детали</th>
-            {% for c in complaint %}
+            {% for c in filter.qs %}
             <tr>
-              <td class="nam left">{{c.technique_model}}</td>
-              <td class="nam left">{{c.number_machine}}</td>
+              <td class="nam left">{{c.date_rejection}}</td>
+              <td class="nam left">{{c.operating_time}}</td>
+              <td class="nam left">{{c.failure_node}}</td>
+              <td class="nam left">{{c.failure_description}}</td>
+              <td class="nam left">{{c.recovery_method}}</td>
+              <td class="nam left">{{c.spare_parts}}</td>
+              <td class="nam left">{{c.recovery_date}}</td>
+              <td class="nam left">{{c.machine_complaint}}</td>
+              <td class="nam left">{{c.service_company_complaint}}</td>
               <td class="nam left">
                 <div class="tabs">
                   <a href="{% url 'complaint_detail' c.pk %}">
-                    <div class="tab">
+                    <div class="tab active">
                       <span>
-                        детали
+                        <div class="smalltext">детали</div>
                       </span>
                     </div>
                   </a>
@@ -106,22 +130,6 @@
             </tr>
             {% endfor %}
           </tbody></table>
-            {% endif %}
-          {% if complaint == 'Нет данных о рекламациях' %}
-          <div class="search_result empty_result">
-            <span>
-              {{ complaint }}
-            </span>
-          </div>
-          {% endif %}
-          {% else %}
-          <div class="search_result empty_result">
-            <span>
-              Авторизуйтесь
-            </span>
-          </div>
-          {% endif %}
-        </div>
       </div>
         {% endblock content %}
     <footer>
