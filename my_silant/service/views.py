@@ -5,8 +5,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView, D
 from .models import Machine, TO, Complaint, ServiceCompany, TechniqueModel, EngineModel, TransmissionModel, \
     DriveAxleModel, SteeringBridgeModel, ServiceType, FailureNode, RecoveryMethod
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from .forms import TOForm, ComplaintForm, MachineForm
-from .filters import MachineFilter, TOFilter, ComplaintFilter, ServiceCompanyFilter
+from .forms import *
 from .filters import *
 # Create your views here.
 # class MachinaListVew(ListView):
@@ -332,6 +331,43 @@ class RecoveryMethodListView(ListView):
         context['filter'] = RecoveryMethodFilter(self.request.GET, queryset=self.get_queryset())  # вписываем наш фильтр в контекст
         return context
 
+# Добавление списков
+class ServiceCompanyCreateVew(CreateView):
+    template_name = 'lists/create.html'
+    form_class = ServiceCompanyForm
+
+
+class TechniqueModelCreateVew(CreateView):
+    template_name = 'lists/create.html'
+    form_class = TechniqueModelForm
+
+class EngineModelCreateVew(CreateView):
+    template_name = 'lists/create.html'
+    form_class = EngineModelForm
+
+class TransmissionModelCreateVew(CreateView):
+    template_name = 'lists/create.html'
+    form_class = TransmissionModelForm
+
+class DriveAxleModelCreateVew(CreateView):
+    template_name = 'lists/create.html'
+    form_class = DriveAxleModelForm
+
+class SteeringBridgeModelCreateVew(CreateView):
+    template_name = 'lists/create.html'
+    form_class = SteeringBridgeModelForm
+
+class ServiceTypeCreateVew(CreateView):
+    template_name = 'lists/create.html'
+    form_class = ServiceTypeForm
+
+class FailureNodeCreateVew(CreateView):
+    template_name = 'lists/create.html'
+    form_class = FailureNodeForm
+
+class RecoveryMethodCreateVew(CreateView):
+    template_name = 'lists/create.html'
+    form_class = RecoveryMethodForm
 
 def hello(request): #TODO убрать!!!
     return render(request, 'base.html')

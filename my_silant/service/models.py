@@ -4,6 +4,9 @@ class ServiceCompany(models.Model):
     name = models.TextField(verbose_name='Название')
     description = models.TextField(verbose_name='Описание')
 
+    def get_absolute_url(self):
+        return f'/servisecomp'
+
     def __str__(self):
         return self.name
 
@@ -14,6 +17,9 @@ class ServiceCompany(models.Model):
 class TechniqueModel(models.Model):
     name = models.TextField(verbose_name='Название')
     description = models.TextField(verbose_name='Описание')
+
+    def get_absolute_url(self):
+        return f'/modeltech'
 
     def __str__(self):
         return self.name
@@ -26,6 +32,9 @@ class EngineModel(models.Model):
     name = models.TextField(verbose_name='Название')
     description = models.TextField(verbose_name='Описание')
 
+    def get_absolute_url(self):
+        return f'/modeleng'
+
     def __str__(self):
         return self.name
 
@@ -36,6 +45,9 @@ class EngineModel(models.Model):
 class TransmissionModel(models.Model):
     name = models.TextField(verbose_name='Название')
     description = models.TextField(verbose_name='Описание')
+
+    def get_absolute_url(self):
+        return f'/modeltrans'
 
     def __str__(self):
         return self.name
@@ -48,6 +60,9 @@ class DriveAxleModel(models.Model):
     name = models.TextField(verbose_name='Название')
     description = models.TextField(verbose_name='Описание')
 
+    def get_absolute_url(self):
+        return f'/modelaxel'
+
     def __str__(self):
         return self.name
 
@@ -58,6 +73,9 @@ class DriveAxleModel(models.Model):
 class SteeringBridgeModel(models.Model):
     name = models.TextField(verbose_name='Название')
     description = models.TextField(verbose_name='Описание')
+
+    def get_absolute_url(self):
+        return f'/modelsteer'
 
     def __str__(self):
         return self.name
@@ -100,6 +118,9 @@ class ServiceType(models.Model):
     name = models.TextField(verbose_name='Название')
     description = models.TextField(verbose_name='Описание')
 
+    def get_absolute_url(self):
+        return f'/servisetype'
+
     def __str__(self):
         return self.name
 
@@ -132,6 +153,9 @@ class FailureNode(models.Model):
     name = models.TextField(verbose_name='Название')
     description = models.TextField(verbose_name='Описание')
 
+    def get_absolute_url(self):
+        return f'/fnode'
+
     def __str__(self):
         return self.name
 
@@ -142,6 +166,9 @@ class FailureNode(models.Model):
 class RecoveryMethod(models.Model):
     name = models.TextField(verbose_name='Название')
     description = models.TextField(verbose_name='Описание')
+
+    def get_absolute_url(self):
+        return f'/reco'
 
     def __str__(self):
         return self.name

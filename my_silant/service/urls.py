@@ -5,7 +5,9 @@ from .views import TOListVew, ComplaintListVew, TOCreateVew, ComplaintCreateVew,
     machine_detail, TODeleteView, ComplaintDeleteView, complaint_list_machine, to_list_machine, \
     ServiceCompanyListView, TechniqueModelListView, EngineModelListView, TransmissionModelListView, \
     DriveAxleModelListView, SteeringBridgeModelListView, ServiceTypeListView, FailureNodeListView, \
-    RecoveryMethodListView
+    RecoveryMethodListView, ServiceCompanyCreateVew, TechniqueModelCreateVew, EngineModelCreateVew, \
+    TransmissionModelCreateVew, DriveAxleModelCreateVew, SteeringBridgeModelCreateVew, ServiceTypeCreateVew, \
+    FailureNodeCreateVew, RecoveryMethodCreateVew
 from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
@@ -42,5 +44,14 @@ urlpatterns = [
     path('servisetype/', ServiceTypeListView.as_view(), name='servisetype'),
     path('fnode/', FailureNodeListView.as_view(), name='fnode'),
     path('reco/', RecoveryMethodListView.as_view(), name='reco'),
-
+    #Добавление списков
+    path('create_servisecomp/', ServiceCompanyCreateVew.as_view(), name='create_servisecomp'),
+    path('create_modeltech/', TechniqueModelCreateVew.as_view(), name='create_modeltech'),
+    path('create_modeleng/', EngineModelCreateVew.as_view(), name='create_modeleng'),
+    path('create_modeltrans/', TransmissionModelCreateVew.as_view(), name='create_modeltrans'),
+    path('create_modelaxel/', DriveAxleModelCreateVew.as_view(), name='create_modelaxel'),
+    path('create_modelsteer/', SteeringBridgeModelCreateVew.as_view(), name='create_modelsteer'),
+    path('create_servisetype/', ServiceTypeCreateVew.as_view(), name='create_servisetype'),
+    path('create_fnode/', FailureNodeCreateVew.as_view(), name='create_fnode'),
+    path('create_reco/', RecoveryMethodCreateVew.as_view(), name='create_reco'),
 ]
