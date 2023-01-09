@@ -147,7 +147,7 @@
               <td class="nam left">{{m.description}}</td>
               <td class="nam left">
                 <div class="tabs">
-                  <a href="#!">
+                  <a href="{% url 'edit_servisetype' m.pk %}">
                     <div class="tab active">
                       <span>
                         <div class="smalltext">Редактировать</div>
@@ -158,7 +158,7 @@
               </td>
               <td class="nam left">
                 <div class="tabs">
-                  <a href="#!">
+                  <a href="{% url 'delete_servisetype' m.pk %}">
                     <div class="tab active">
                       <span>
                         <div class="smalltext">Удалить</div>

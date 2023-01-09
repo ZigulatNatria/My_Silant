@@ -42,142 +42,42 @@
         <section>
   <div class="line">
     <span class="title">
-      Проверьте комплектацию и технические характеристики техники Силант
+      Общая информация
     </span>
   </div>
   <div class="line">
-      <div class="search_result">
-      <div class="result_info">
-        <div class="result_collection">
-            <form method="GET">
-              {{ filter.form }}
-                <div class="tabs">
-                <input class="tab" type="submit" value="Фильтр">
-                </div>
-            </form>
-      </div>
-    </div>
-  </div>
     <div class="column">
       <div class="search_result">
         <div class="result_info">
           <span>Добро пожаловать! {{request.user.username}}</span>
         </div>
         <div class="result_info">
-          <span>Выбирите список для редактирования, удаления или добавьте информацию в список</span>
+          <span>Вы действительно хотите удалить данные из списка?</span>
         </div>
-        <div class="result_collection">
-          <div class="tabs">
-            <a href="/servisecomp/">
-            <div class="tab">
-              <span>
-                Сервисная компания
-              </span>
-            </div>
-            </a>
-            <a href="/modeltech/">
-              <div class="tab">
-              <span>
-                Модель техники
-              </span>
-            </div>
-            </a>
-            <a href="/modeleng/">
-            <div class="tab">
-              <span>
-                Модель двигателя
-              </span>
-            </div>
-            </a>
-            <a href="/modeltrans/">
-            <div class="tab">
-              <span>
-                Модель трансмиссии
-              </span>
-            </div>
-            </a>
-            <a href="/modelaxel/">
-            <div class="tab">
-              <span>
-                Модель ведущего моста
-              </span>
-            </div>
-            </a>
-            <a href="/modelsteer/">
-            <div class="tab">
-              <span>
-                Модель управляемтого моста
-              </span>
-            </div>
-            </a>
-            <a href="/servisetype/">
-            <div class="tab">
-              <span>
-                Вид ТО
-              </span>
-            </div>
-            </a>
-            <a href="/fnode/">
-            <div class="tab">
-              <span>
-                Узел отказа
-              </span>
-            </div>
-            </a>
-            <a href="/reco/">
-            <div class="tab active">
-              <span>
-                Способ восстановления
-              </span>
-            </div>
-            </a>
-          </div>
+        <div class="search_result">
+        <div class="result_info">
+
         </div>
+      </div>
         <div class="result_collection">
           <table>
             <tbody><tr>
               <th class="nam left">Название</th>
               <th class="nam left">Описание</th>
-              <th class="nam left">Редактировать</th>
-              <th class="nam left">Удалить</th>
             </tr>
-            {% for m in filter.qs %}
-            <tr id="myUL">
-              <td class="nam left">{{m.name}}</td>
-              <td class="nam left">{{m.description}}</td>
-              <td class="nam left">
-                <div class="tabs">
-                  <a href="{% url 'edit_reco' m.pk %}">
-                    <div class="tab active">
-                      <span>
-                        <div class="smalltext">Редактировать</div>
-                      </span>
-                    </div>
-                  </a>
-                </div>
-              </td>
-              <td class="nam left">
-                <div class="tabs">
-                  <a href="{% url 'delete_reco' m.pk %}">
-                    <div class="tab active">
-                      <span>
-                        <div class="smalltext">Удалить</div>
-                      </span>
-                    </div>
-                  </a>
-                </div>
+            <tr>
+              <td class="nam left">{{steeringbridgemodel.name}}</td>
+              <td class="nam left">{{steeringbridgemodel.description}}</td>
               </td>
             </tr>
-            {% endfor %}
           </tbody></table>
           <div class="tabs">
-                  <a href="{% url 'create_reco' %}">
-                    <div class="tab">
-                      <span>
-                        Добавить
-                      </span>
+                    <div class="tabs">
+                        <form method="POST">
+                        {% csrf_token %}
+                        <input class="tab" type="submit" value="подтвердить">
+                        </form>
                     </div>
-                  </a>
                 </div>
         </div>
       </div>

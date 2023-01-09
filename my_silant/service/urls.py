@@ -8,6 +8,7 @@ from .views import TOListVew, ComplaintListVew, TOCreateVew, ComplaintCreateVew,
     RecoveryMethodListView, ServiceCompanyCreateVew, TechniqueModelCreateVew, EngineModelCreateVew, \
     TransmissionModelCreateVew, DriveAxleModelCreateVew, SteeringBridgeModelCreateVew, ServiceTypeCreateVew, \
     FailureNodeCreateVew, RecoveryMethodCreateVew
+from .views import *
 from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
@@ -54,4 +55,24 @@ urlpatterns = [
     path('create_servisetype/', ServiceTypeCreateVew.as_view(), name='create_servisetype'),
     path('create_fnode/', FailureNodeCreateVew.as_view(), name='create_fnode'),
     path('create_reco/', RecoveryMethodCreateVew.as_view(), name='create_reco'),
+    #Удаление списков
+    path('delete_servisecomp/<int:pk>/', ServiceCompanyDeleteView.as_view(), name='delete_servisecomp'),
+    path('delete_techniquemodel/<int:pk>/', TechniqueModelDeleteView.as_view(), name='delete_techniquemodel'),
+    path('delete_enginemodel/<int:pk>/', EngineModelDeleteView.as_view(), name='delete_enginemodel'),
+    path('delete_modeltrans/<int:pk>/', TransmissionModelDeleteView.as_view(), name='delete_modeltrans'),
+    path('delete_modelaxel/<int:pk>/', DriveAxleModelDeleteView.as_view(), name='delete_modelaxel'),
+    path('delete_modelsteer/<int:pk>/', SteeringBridgeModelDeleteView.as_view(), name='delete_modelsteer'),
+    path('delete_servisetype/<int:pk>/', ServiceTypeDeleteView.as_view(), name='delete_servisetype'),
+    path('delete_fnode/<int:pk>/', FailureNodeDeleteView.as_view(), name='delete_fnode'),
+    path('delete_reco/<int:pk>/', RecoveryMethodDeleteView.as_view(), name='delete_reco'),
+    #Редактирование списков
+    path('edit_servisecomp/<int:pk>/', ServiceCompanyUpdateView.as_view(), name='edit_servisecomp'),
+    path('edit_modeltech/<int:pk>/', TechniqueModelUpdateView.as_view(), name='edit_modeltech'),
+    path('edit_enginemodel/<int:pk>/', EngineModellUpdateView.as_view(), name='edit_enginemodel'),
+    path('edit_modeltrans/<int:pk>/', TransmissionModelUpdateView.as_view(), name='edit_modeltrans'),
+    path('edit_modelaxel/<int:pk>/', DriveAxleModelUpdateView.as_view(), name='edit_modelaxel'),
+    path('edit_modelsteer/<int:pk>/', SteeringBridgeModelUpdateView.as_view(), name='edit_modelsteer'),
+    path('edit_servisetype/<int:pk>/', ServiceTypeUpdateView.as_view(), name='edit_servisetype'),
+    path('edit_fnode/<int:pk>/', FailureNodeUpdateView.as_view(), name='edit_fnode'),
+    path('edit_reco/<int:pk>/', RecoveryMethodUpdateView.as_view(), name='edit_reco'),
 ]

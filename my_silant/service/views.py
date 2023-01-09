@@ -369,5 +369,142 @@ class RecoveryMethodCreateVew(CreateView):
     template_name = 'lists/create.html'
     form_class = RecoveryMethodForm
 
+# Формы для удаления списков
+class ServiceCompanyDeleteView(DeleteView):
+    # permission_required = ('',)
+    template_name = 'lists/delete_servicecompany.html'
+    queryset = ServiceCompany.objects.all()
+    success_url = '/servisecomp/'
+
+class TechniqueModelDeleteView(DeleteView):
+    # permission_required = ('',)
+    template_name = 'lists/delete_techniquemodel.html'
+    queryset = TechniqueModel.objects.all()
+    success_url = '/modeltech/'
+
+class EngineModelDeleteView(DeleteView):
+    # permission_required = ('',)
+    template_name = 'lists/delete_enginemodel.html'
+    queryset = EngineModel.objects.all()
+    success_url = '/modeleng/'
+
+class TransmissionModelDeleteView(DeleteView):
+    # permission_required = ('',)
+    template_name = 'lists/delete_transmissionmodel.html'
+    queryset = TransmissionModel.objects.all()
+    success_url = '/modeltrans/'
+
+class DriveAxleModelDeleteView(DeleteView):
+    # permission_required = ('',)
+    template_name = 'lists/delete_driveaxlemodel.html'
+    queryset = DriveAxleModel.objects.all()
+    success_url = '/modelaxel/'
+
+class SteeringBridgeModelDeleteView(DeleteView):
+    # permission_required = ('',)
+    template_name = 'lists/delete_steeringbridgemodel.html'
+    queryset = SteeringBridgeModel.objects.all()
+    success_url = '/modelsteer/'
+
+class ServiceTypeDeleteView(DeleteView):
+    # permission_required = ('',)
+    template_name = 'lists/delete_servicetype.html'
+    queryset = ServiceType.objects.all()
+    success_url = '/servisetype/'
+
+class FailureNodeDeleteView(DeleteView):
+    # permission_required = ('',)
+    template_name = 'lists/delete_failurenode.html'
+    queryset = FailureNode.objects.all()
+    success_url = '/fnode/'
+
+class RecoveryMethodDeleteView(DeleteView):
+    # permission_required = ('',)
+    template_name = 'lists/delete_recoverymethod.html'
+    queryset = RecoveryMethod.objects.all()
+    success_url = '/reco/'
+
+# Редактирование списков
+class ServiceCompanyUpdateView(UpdateView):
+    # permission_required = ('',)
+    template_name = 'lists/create.html'
+    form_class = ServiceCompanyForm # Форму берём ту же что и для добавления новых данных
+
+    def get_object(self, **kwargs):
+        id = self.kwargs.get('pk')
+        return ServiceCompany.objects.get(pk=id)
+
+class TechniqueModelUpdateView(UpdateView):
+    # permission_required = ('',)
+    template_name = 'lists/create.html'
+    form_class = TechniqueModelForm # Форму берём ту же что и для добавления новых данных
+
+    def get_object(self, **kwargs):
+        id = self.kwargs.get('pk')
+        return TechniqueModel.objects.get(pk=id)
+
+class EngineModellUpdateView(UpdateView):
+    # permission_required = ('',)
+    template_name = 'lists/create.html'
+    form_class = EngineModelForm # Форму берём ту же что и для добавления новых данных
+
+    def get_object(self, **kwargs):
+        id = self.kwargs.get('pk')
+        return EngineModel.objects.get(pk=id)
+
+class TransmissionModelUpdateView(UpdateView):
+    # permission_required = ('',)
+    template_name = 'lists/create.html'
+    form_class = TransmissionModelForm # Форму берём ту же что и для добавления новых данных
+
+    def get_object(self, **kwargs):
+        id = self.kwargs.get('pk')
+        return TransmissionModel.objects.get(pk=id)
+
+class DriveAxleModelUpdateView(UpdateView):
+    # permission_required = ('',)
+    template_name = 'lists/create.html'
+    form_class = DriveAxleModelForm # Форму берём ту же что и для добавления новых данных
+
+    def get_object(self, **kwargs):
+        id = self.kwargs.get('pk')
+        return DriveAxleModel.objects.get(pk=id)
+
+class SteeringBridgeModelUpdateView(UpdateView):
+    # permission_required = ('',)
+    template_name = 'lists/create.html'
+    form_class = SteeringBridgeModelForm # Форму берём ту же что и для добавления новых данных
+
+    def get_object(self, **kwargs):
+        id = self.kwargs.get('pk')
+        return SteeringBridgeModel.objects.get(pk=id)
+
+class ServiceTypeUpdateView(UpdateView):
+    # permission_required = ('',)
+    template_name = 'lists/create.html'
+    form_class = ServiceTypeForm # Форму берём ту же что и для добавления новых данных
+
+    def get_object(self, **kwargs):
+        id = self.kwargs.get('pk')
+        return ServiceType.objects.get(pk=id)
+
+class FailureNodeUpdateView(UpdateView):
+    # permission_required = ('',)
+    template_name = 'lists/create.html'
+    form_class = FailureNodeForm # Форму берём ту же что и для добавления новых данных
+
+    def get_object(self, **kwargs):
+        id = self.kwargs.get('pk')
+        return FailureNode.objects.get(pk=id)
+
+class RecoveryMethodUpdateView(UpdateView):
+    # permission_required = ('',)
+    template_name = 'lists/create.html'
+    form_class = RecoveryMethodForm # Форму берём ту же что и для добавления новых данных
+
+    def get_object(self, **kwargs):
+        id = self.kwargs.get('pk')
+        return RecoveryMethod.objects.get(pk=id)
+
 def hello(request): #TODO убрать!!!
     return render(request, 'base.html')
