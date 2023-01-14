@@ -8,24 +8,6 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from .forms import *
 from .filters import *
 # Create your views here.
-# class MachinaListVew(ListView):
-#     model = Machine
-#     context_object_name = 'machines'
-#     template_name = 'machine_list.html'
-#     queryset = Machine.objects.all()
-#
-#
-#
-# class MachinaDetailVew(DetailView):
-#     model = Machine
-#     context_object_name = 'machine'
-#     template_name = 'machine.html'
-#     queryset = Machine.objects.all()
-#
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['is_aut'] = self.request.user.groups.exists()
-#         return context
 
 
 class TOListVew(LoginRequiredMixin, ListView):
@@ -171,7 +153,14 @@ def to_detail(request, to_id):
     if is_aut:
         to_d = TO.objects.get(pk=to_id)
         machine = Machine.objects.get(number_machine=to_d.machine_to)
-        context = {'to_d': to_d, 'machine': machine, 'is_aut': is_aut}
+        service = ServiceType.objects.get(name=to_d.service_type)
+        service_company = ServiceCompany.objects.get(name=to_d.company_make_service)
+        context = {'to_d': to_d,
+                   'machine': machine,
+                   'is_aut': is_aut,
+                   'service': service,
+                   'service_company': service_company
+                   }
     else:
         to_d = 'Авторизуйтесь'
         context = {'to_d': to_d}
@@ -182,7 +171,16 @@ def complaint_detail(request, complaint_id):
     if is_aut:
         complaint_d = Complaint.objects.get(pk=complaint_id)
         machine = Machine.objects.get(number_machine=complaint_d.machine_complaint)
-        context = {'complaint_d': complaint_d, 'machine': machine, 'is_aut': is_aut}
+        node = FailureNode.objects.get(name=complaint_d.failure_node)
+        recovery = RecoveryMethod.objects.get(name=complaint_d.recovery_method)
+        service = ServiceCompany.objects.get(name=complaint_d.service_company_complaint)
+        context = {'complaint_d': complaint_d,
+                   'machine': machine,
+                   'is_aut': is_aut,
+                   'node': node,
+                   'recovery': recovery,
+                   'service': service
+                   }
     else:
         complaint_d = 'Авторизуйтесь'
         context = {'complaint_d': complaint_d}
@@ -216,7 +214,22 @@ def machine_detail(request, machine_id):
     is_aut = request.user.groups.exists()
     if is_aut:
         machine = Machine.objects.get(pk=machine_id)
-        context = {'machine': machine, 'is_aut': is_aut}
+        technique = TechniqueModel.objects.get(name=machine.technique_model) #Т.к. поле technique_model в модели Machina соответствует полю name модели TechniqueModel
+                                                                              #  через него получаем доступ к данным модели TechniqueModel
+        engine = EngineModel.objects.get(name=machine.engine_model)
+        trans = TransmissionModel.objects.get(name=machine.transmission_model)
+        axle = DriveAxleModel.objects.get(name=machine.drive_axle_model)
+        steering = SteeringBridgeModel.objects.get(name=machine.steering_bridge_model)
+        service = ServiceCompany.objects.get(name=machine.service_company)
+        context = {'machine': machine,
+                   'technique': technique,
+                   'is_aut': is_aut,
+                   'engine': engine,
+                   'trans': trans,
+                   'axle': axle,
+                   'steering': steering,
+                   'service': service,
+                   }
     else:
         machine = 'Авторизуйтесь'
         context = {'machine': machine}
@@ -505,6 +518,3 @@ class RecoveryMethodUpdateView(UpdateView):
     def get_object(self, **kwargs):
         id = self.kwargs.get('pk')
         return RecoveryMethod.objects.get(pk=id)
-
-def hello(request): #TODO убрать!!!
-    return render(request, 'base.html')

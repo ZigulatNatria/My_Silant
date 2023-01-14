@@ -105,6 +105,7 @@
               <th class="nam left">Зав. № ведущего моста</th>
               <th class="nam left">Модель управляемого моста</th>
               <th class="nam left">Зав. № управляемого моста</th>
+              <th class="nam left">Дата отгрузки с завода</th>
               <th class="nam left">Детали</th>
             </tr>
             {% for m in filter.qs %}
@@ -119,6 +120,7 @@
               <td class="nam left">{{m.drive_axle_number}}</td>
               <td class="nam left">{{m.steering_bridge_model}}</td>
               <td class="nam left">{{m.steering_bridge_number}}</td>
+              <td class="nam left">{{m.shipping_date}}</td>
               <td class="nam left">
                 <div class="tabs">
                   <a href="{% url 'machine_detail' m.pk %}">
@@ -165,4 +167,4 @@
         </div>
       </div>
     </footer>
-  <script async="" nonce="" type="text/javascript" id="mini-profiler" src="./Oleg_files/includes.js" data-css-url="/mini-profiler-resources/includes.css?v=35a79b300ab5afa978cb59af0b05e059" data-version="35a79b300ab5afa978cb59af0b05e059" data-path="/mini-profiler-resources/" data-current-id="96ql1vj3cyxyc3289e3" data-ids="96ql1vj3cyxyc3289e3,abv2931k7bokkvsuz3ss" data-horizontal-position="left" data-vertical-position="top" data-trivial="false" data-children="false" data-max-traces="20" data-controls="false" data-total-sql-count="false" data-authorized="true" data-toggle-shortcut="alt+p" data-start-hidden="false" data-collapse-results="true" data-html-container="body" data-hidden-custom-fields="" data-turbo-permanent="false"></script>
+      <script async="" nonce="" type="text/javascript" id="mini-profiler" src="./Oleg_files/includes.js" data-css-url="/mini-profiler-resources/includes.css?v=35a79b300ab5afa978cb59af0b05e059" data-version="35a79b300ab5afa978cb59af0b05e059" data-path="/mini-profiler-resources/" data-current-id="96ql1vj3cyxyc3289e3" data-ids="96ql1vj3cyxyc3289e3,abv2931k7bokkvsuz3ss" data-horizontal-position="left" data-vertical-position="top" data-trivial="false" data-children="false" data-max-traces="20" data-controls="false" data-total-sql-count="false" data-authorized="true" data-toggle-shortcut="alt+p" data-start-hidden="false" data-collapse-results="true" data-html-container="body" data-hidden-custom-fields="" data-turbo-permanent="false"></script>

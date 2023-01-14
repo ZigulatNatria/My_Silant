@@ -96,23 +96,23 @@ class Machine(models.Model):
     steering_bridge_model = models.ForeignKey(SteeringBridgeModel, verbose_name='Модель управляемого моста', on_delete=models.CASCADE)
     steering_bridge_number = models.TextField(verbose_name='Зав. № управляемого моста')
     supply_contract = models.TextField(verbose_name='Договор поставки №, дата')
-    shipping_date = models.DateField(verbose_name='Дата отгрузки с завода') #TODO календарь
+    shipping_date = models.DateField(verbose_name='Дата отгрузки с завода')
     consignee = models.TextField(verbose_name='Грузополучатель (конечный потребитель)')
     delivery_address = models.TextField(verbose_name='Адрес поставки (эксплуатации)')
     equipment = models.TextField(verbose_name='Комплектация (доп. опции)')
-    client = models.TextField(verbose_name='Клиент') #TODO справочник пользователей с соответствующими правами
-    # service_company = models.TextField(verbose_name='Сервисная компания') #TODO справочник пользователей с соответствующими правами
+    client = models.TextField(verbose_name='Клиент')
     service_company = models.ForeignKey(ServiceCompany, verbose_name='Сервисная компания', on_delete=models.CASCADE)
 
     def get_absolute_url(self):
-        # return f'/to/{self.id}' #TODO переписать на id когда раскину по деталям
-        return f'/machine'
+        # return f'/to/{self.id}'
+        return f'/user'
 
     def __str__(self):
         return self.number_machine
 
     class Meta:
         verbose_name = 'Машина'
+        ordering = ['-shipping_date'] # Сортировка по дате отгрузки
 
 class ServiceType(models.Model):
     name = models.TextField(verbose_name='Название')
@@ -130,16 +130,14 @@ class ServiceType(models.Model):
 
 class TO(models.Model):
     service_type = models.ForeignKey(ServiceType, verbose_name='Вид ТО', on_delete=models.CASCADE)
-    service_date = models.DateField(verbose_name='Дата проведения ТО') #TODO календарь
+    service_date = models.DateField(verbose_name='Дата проведения ТО')
     operating_time = models.FloatField(verbose_name='Наработка, м/час')
     work_order_number = models.TextField(verbose_name='№ заказ-наряда')
-    work_order_date = models.DateField(verbose_name='дата заказ-наряда')  # TODO календарь
+    work_order_date = models.DateField(verbose_name='дата заказ-наряда')
     company_make_service = models.ForeignKey(ServiceCompany, verbose_name='Сервисная компания', on_delete=models.CASCADE)
-    # company_make_service = models.TextField(verbose_name='Организация, проводившая ТО') #TODO Удалить!!!
     machine_to = models.ForeignKey(Machine, verbose_name='Зав. № машины', on_delete=models.CASCADE)
 
     def get_absolute_url(self):
-        # return f'/to/{self.id}' #TODO переписать на id когда раскину по деталям
         return f'/to'
 
     def __str__(self):
@@ -147,6 +145,7 @@ class TO(models.Model):
 
     class Meta:
         verbose_name = '«ТО» (техническое обслуживание)'
+        ordering = ['-service_date'] #Фильтрация по дате проведения ТО
 
 
 class FailureNode(models.Model):
@@ -178,18 +177,17 @@ class RecoveryMethod(models.Model):
 
 
 class Complaint(models.Model):
-    date_rejection = models.DateField(verbose_name='Дата отказа') #TODO календарь
+    date_rejection = models.DateField(verbose_name='Дата отказа')
     operating_time = models.FloatField(verbose_name='Наработка, м/час')
     failure_node = models.ForeignKey(FailureNode, verbose_name='Узел отказа', on_delete=models.CASCADE)
     failure_description = models.TextField(verbose_name='Описание отказа')
     recovery_method = models.ForeignKey(RecoveryMethod, verbose_name='Способ восстановления', on_delete=models.CASCADE)
     spare_parts = models.TextField(verbose_name='Используемые запасные части', null=True, blank=True)
-    recovery_date = models.DateField(verbose_name='Дата восстановления') #TODO календарь
+    recovery_date = models.DateField(verbose_name='Дата восстановления')
     machine_complaint = models.ForeignKey(Machine, verbose_name='Зав. № машины', on_delete=models.CASCADE)
     service_company_complaint = models.ForeignKey(ServiceCompany, verbose_name='Сервисная компания', on_delete=models.CASCADE)
 
     def get_absolute_url(self):
-        # return f'/to/{self.id}' #TODO переписать на id когда раскину по деталям
         return f'/complaint'
 
     def downtime(self):
@@ -200,4 +198,5 @@ class Complaint(models.Model):
 
     class Meta:
         verbose_name = 'Рекламации'
+        ordering = ['-date_rejection']  # Фильтрация по дате отказа
 

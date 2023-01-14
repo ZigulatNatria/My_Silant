@@ -1,21 +1,8 @@
 from django.urls import path
-from .views import TOListVew, ComplaintListVew, TOCreateVew, ComplaintCreateVew,\
-    MachineCreateVew, TOUpdateView, ComplaintUpdateView, MachineUpdateView, MachineDeleteView, \
-    SearchMachines, hello, by_user_machine, to_detail, complaint_detail, \
-    machine_detail, TODeleteView, ComplaintDeleteView, complaint_list_machine, to_list_machine, \
-    ServiceCompanyListView, TechniqueModelListView, EngineModelListView, TransmissionModelListView, \
-    DriveAxleModelListView, SteeringBridgeModelListView, ServiceTypeListView, FailureNodeListView, \
-    RecoveryMethodListView, ServiceCompanyCreateVew, TechniqueModelCreateVew, EngineModelCreateVew, \
-    TransmissionModelCreateVew, DriveAxleModelCreateVew, SteeringBridgeModelCreateVew, ServiceTypeCreateVew, \
-    FailureNodeCreateVew, RecoveryMethodCreateVew
 from .views import *
 from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
-    # path('machine', MachinaListVew.as_view(), name='machine'),
-    # path('to', login_required(TOListVew.as_view()), name='to'),  #для разнообразия навесил декоратор на URL
-    # path('<int:pk>', MachinaDetailVew.as_view(), name='machine_detail'),
-    path('hello/', hello, name='hello'), #TODO убрать !!!!
     path('search/', SearchMachines.as_view(), name='search'),
     path('user/', by_user_machine, name='user'),
     path('to/', TOListVew.as_view(), name='to'),

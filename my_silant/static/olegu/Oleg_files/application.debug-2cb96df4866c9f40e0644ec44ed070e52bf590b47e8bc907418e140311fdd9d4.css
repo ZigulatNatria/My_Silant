@@ -364,6 +364,7 @@ footer {
   border-spacing: 0;
   max-width: 100%;
   min-width: 100%;
+  empty-cells: show;
 }
 
 /* line 281, app/assets/stylesheets/all_pages.scss */
