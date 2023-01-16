@@ -15,8 +15,13 @@ class TOListVew(LoginRequiredMixin, ListView):
     template_name = 'to.html'
 
     def get_context_data(self, **kwargs):  # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (привет, полиморфизм, мы скучали!!!)
-        context = super().get_context_data(**kwargs)
-        context['filter'] = TOFilter(self.request.GET, queryset=self.get_queryset())  # вписываем наш фильтр в контекст
+        filter = TOFilter(self.request.GET, queryset=self.get_queryset())  # вписываем наш фильтр в контекст
+        manager = self.request.user.groups.filter(name='Менеджер') # Фильтруем по менеджеру и проверяем
+        if not manager.exists():
+            is_manager = 'НЕ Менеджер'
+        else:
+            is_manager = 'Менеджер'
+        context = {'filter': filter, 'is_manager': is_manager}
         return context
 
 
@@ -26,8 +31,13 @@ class ComplaintListVew(LoginRequiredMixin, ListView):
     template_name = 'complaint.html'
 
     def get_context_data(self, **kwargs):  # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (привет, полиморфизм, мы скучали!!!)
-        context = super().get_context_data(**kwargs)
-        context['filter'] = ComplaintFilter(self.request.GET, queryset=self.get_queryset())  # вписываем наш фильтр в контекст
+        filter = ComplaintFilter(self.request.GET, queryset=self.get_queryset())  # вписываем наш фильтр в контекст
+        manager = self.request.user.groups.filter(name='Менеджер')
+        if not manager.exists():
+            is_manager = 'НЕ Менеджер'
+        else:
+            is_manager = 'Менеджер'
+        context = {'filter': filter, 'is_manager': is_manager}
         return context
 
 
@@ -131,17 +141,30 @@ class SearchMachines(ListView):
 # функция фильтрации по авторизованному пользователю
 def by_user_machine(request):
     is_aut = request.user.groups.exists()   # Проверка зарегистрировани ли пользователь
+    manager = request.user.groups.filter(name='Менеджер')  # Фильтруем по названию группы аутентифицированного пользователя
+    if not manager.exists():
+        is_manager = 'НЕ Менеджер'
+    else:
+        is_manager = 'Менеджер'
+
     filter = MachineFilter(request.GET) # Фильтрация перебила всю красоту (((((
     if is_aut:   # Если пользователь зарегистрирован
-        machine = Machine.objects.filter(client=request.user.first_name) # Фильтруем все строки по полю клиент, если он является пользователем совершающим запрос
-        if not machine.exists(): # Если пользователь не является клиентом проверяем является ли он сервисной компанией
-            servicelist = ServiceCompany.objects.filter(name=request.user.first_name) # Проверяем есть ли в списке сервисных компаний запись с именм пользователя (сервисная компания)
-            if servicelist.exists(): # Если сервисная компания есть в базе идём далее
-                service = ServiceCompany.objects.get(name=request.user.first_name) # Т.к. поле сервисной компании в модели Machine является связанным для начала получаем его id
-                machine = Machine.objects.filter(service_company=service.id) # По id фильтруем все строки по полю сервисной компании
-            else:
-                machine = 'К сожалению Ваша техника отсутствует в базе :('
-        context = {'machine': machine, 'is_aut': is_aut, 'filter': filter}
+        if is_manager == 'Менеджер':
+            machine = 0
+        else:
+            machine = Machine.objects.filter(client=request.user.first_name) # Фильтруем все строки по полю клиент, если он является пользователем совершающим запрос
+            if not machine.exists(): # Если пользователь не является клиентом проверяем является ли он сервисной компанией
+                servicelist = ServiceCompany.objects.filter(name=request.user.first_name) # Проверяем есть ли в списке сервисных компаний запись с именм пользователя (сервисная компания)
+                if servicelist.exists(): # Если сервисная компания есть в базе идём далее
+                    service = ServiceCompany.objects.get(name=request.user.first_name) # Т.к. поле сервисной компании в модели Machine является связанным для начала получаем его id
+                    machine = Machine.objects.filter(service_company=service.id) # По id фильтруем все строки по полю сервисной компании
+                else:
+                    machine = 'К сожалению Ваша техника отсутствует в базе :('
+        context = {'machine': machine,
+                   'is_aut': is_aut,
+                   'filter': filter,
+                   'is_manager': is_manager
+                   }
     else:
         machine = 'Авторизуйся'
         context = {'machine': machine}
@@ -150,6 +173,11 @@ def by_user_machine(request):
 
 def to_detail(request, to_id):
     is_aut = request.user.groups.exists()
+    manager = request.user.groups.filter(name='Менеджер')  # Фильтруем по названию группы аутентифицированного пользователя
+    if not manager.exists():
+        is_manager = 'НЕ Менеджер'
+    else:
+        is_manager = 'Менеджер'
     if is_aut:
         to_d = TO.objects.get(pk=to_id)
         machine = Machine.objects.get(number_machine=to_d.machine_to)
@@ -159,7 +187,8 @@ def to_detail(request, to_id):
                    'machine': machine,
                    'is_aut': is_aut,
                    'service': service,
-                   'service_company': service_company
+                   'service_company': service_company,
+                   'is_manager': is_manager
                    }
     else:
         to_d = 'Авторизуйтесь'
@@ -168,6 +197,11 @@ def to_detail(request, to_id):
 
 def complaint_detail(request, complaint_id):
     is_aut = request.user.groups.exists()
+    manager = request.user.groups.filter(name='Менеджер')  # Фильтруем по названию группы аутентифицированного пользователя
+    if not manager.exists():
+        is_manager = 'НЕ Менеджер'
+    else:
+        is_manager = 'Менеджер'
     if is_aut:
         complaint_d = Complaint.objects.get(pk=complaint_id)
         machine = Machine.objects.get(number_machine=complaint_d.machine_complaint)
@@ -179,7 +213,8 @@ def complaint_detail(request, complaint_id):
                    'is_aut': is_aut,
                    'node': node,
                    'recovery': recovery,
-                   'service': service
+                   'service': service,
+                   'is_manager': is_manager
                    }
     else:
         complaint_d = 'Авторизуйтесь'
@@ -188,10 +223,19 @@ def complaint_detail(request, complaint_id):
 
 def complaint_list_machine(request, machine_id): # Вывод всех рекламаций связанных с выбранной машиной
     is_aut = request.user.groups.exists()
+    manager = request.user.groups.filter(name='Менеджер')  # Фильтруем по названию группы аутентифицированного пользователя
+    if not manager.exists():
+        is_manager = 'НЕ Менеджер'
+    else:
+        is_manager = 'Менеджер'
     if is_aut:
         complaint_list = Complaint.objects.filter(machine_complaint=machine_id)
         machine = Machine.objects.get(pk=machine_id)
-        context = {'complaint_list': complaint_list, 'machine': machine, 'is_aut': is_aut}
+        context = {'complaint_list': complaint_list,
+                   'machine': machine,
+                   'is_aut': is_aut,
+                   'is_manager': is_manager
+                   }
     else:
         complaint_list = 'Авторизуйтесь'
         context = {'complaint_list': complaint_list}
@@ -200,10 +244,19 @@ def complaint_list_machine(request, machine_id): # Вывод всех рекл�
 
 def to_list_machine(request, machine_id): # Вывод всех ТО связанных с выбранной машиной
     is_aut = request.user.groups.exists()
+    manager = request.user.groups.filter(name='Менеджер')  # Фильтруем по названию группы аутентифицированного пользователя
+    if not manager.exists():
+        is_manager = 'НЕ Менеджер'
+    else:
+        is_manager = 'Менеджер'
     if is_aut:
         to_list = TO.objects.filter(machine_to=machine_id)
         machine = Machine.objects.get(pk=machine_id)
-        context = {'to_list': to_list, 'machine': machine, 'is_aut': is_aut}
+        context = {'to_list': to_list,
+                   'machine': machine,
+                   'is_aut': is_aut,
+                   'is_manager': is_manager
+                   }
     else:
         to_list = 'Авторизуйтесь'
         context = {'to_list': to_list}
@@ -212,6 +265,11 @@ def to_list_machine(request, machine_id): # Вывод всех ТО связа�
 
 def machine_detail(request, machine_id):
     is_aut = request.user.groups.exists()
+    manager = request.user.groups.filter(name='Менеджер')  # Фильтруем по названию группы аутентифицированного пользователя
+    if not manager.exists():
+        is_manager = 'НЕ Менеджер'
+    else:
+        is_manager = 'Менеджер'
     if is_aut:
         machine = Machine.objects.get(pk=machine_id)
         technique = TechniqueModel.objects.get(name=machine.technique_model) #Т.к. поле technique_model в модели Machina соответствует полю name модели TechniqueModel
@@ -229,6 +287,7 @@ def machine_detail(request, machine_id):
                    'axle': axle,
                    'steering': steering,
                    'service': service,
+                   'is_manager': is_manager
                    }
     else:
         machine = 'Авторизуйтесь'
@@ -237,11 +296,13 @@ def machine_detail(request, machine_id):
 
 # Списки
 # Получение списков
-class ServiceCompanyListView(ListView):
+class ServiceCompanyListView(PermissionRequiredMixin, ListView):
+    permission_required = ('service.view_servicecompany')
     model = ServiceCompany
     context_object_name = 'servicecompany'
     template_name = 'lists/servicecompany_list.html'
     queryset = ServiceCompany.objects.all()
+    login_url = '/'
 
     def get_context_data(self, **kwargs):  # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (привет, полиморфизм, мы скучали!!!)
         context = super().get_context_data(**kwargs)
@@ -249,11 +310,13 @@ class ServiceCompanyListView(ListView):
         return context
 
 
-class TechniqueModelListView(ListView):
+class TechniqueModelListView(PermissionRequiredMixin, ListView):
+    permission_required = ('service.view_techniquemodel')
     model = TechniqueModel
     context_object_name = 'techniquemodel'
     template_name = 'lists/techniquemodel_list.html'
     queryset = TechniqueModel.objects.all()
+    login_url = '/'
 
     def get_context_data(self, **kwargs):  # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (привет, полиморфизм, мы скучали!!!)
         context = super().get_context_data(**kwargs)
@@ -261,11 +324,13 @@ class TechniqueModelListView(ListView):
         return context
 
 
-class EngineModelListView(ListView):
+class EngineModelListView(PermissionRequiredMixin, ListView):
+    permission_required = ('service.view_enginemodel')
     model = EngineModel
     context_object_name = 'enginemodel'
     template_name = 'lists/enginemodel_list.html'
     queryset = EngineModel.objects.all()
+    login_url = '/'
 
     def get_context_data(self, **kwargs):  # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (привет, полиморфизм, мы скучали!!!)
         context = super().get_context_data(**kwargs)
@@ -273,11 +338,13 @@ class EngineModelListView(ListView):
         return context
 
 
-class TransmissionModelListView(ListView):
+class TransmissionModelListView(PermissionRequiredMixin, ListView):
+    permission_required = ('service.view_transmissionmodel')
     model = TransmissionModel
     context_object_name = 'transmissionmodel'
     template_name = 'lists/transmissionmodel_list.html'
     queryset = TransmissionModel.objects.all()
+    login_url = '/'
 
     def get_context_data(self, **kwargs):  # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (привет, полиморфизм, мы скучали!!!)
         context = super().get_context_data(**kwargs)
@@ -285,11 +352,13 @@ class TransmissionModelListView(ListView):
         return context
 
 
-class DriveAxleModelListView(ListView):
+class DriveAxleModelListView(PermissionRequiredMixin, ListView):
+    permission_required = ('service.view_driveaxlemodel')
     model = DriveAxleModel
     context_object_name = 'driveaxlemodel'
     template_name = 'lists/driveaxlemodel_list.html'
     queryset = DriveAxleModel.objects.all()
+    login_url = '/'
 
     def get_context_data(self, **kwargs):  # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (привет, полиморфизм, мы скучали!!!)
         context = super().get_context_data(**kwargs)
@@ -297,11 +366,13 @@ class DriveAxleModelListView(ListView):
         return context
 
 
-class SteeringBridgeModelListView(ListView):
+class SteeringBridgeModelListView(PermissionRequiredMixin, ListView):
+    permission_required = ('service.view_steeringbridgemodel')
     model = SteeringBridgeModel
     context_object_name = 'steeringbridgemodel'
     template_name = 'lists/steeringbridgemodel_list.html'
     queryset = SteeringBridgeModel.objects.all()
+    login_url = '/'
 
     def get_context_data(self, **kwargs):  # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (привет, полиморфизм, мы скучали!!!)
         context = super().get_context_data(**kwargs)
@@ -309,11 +380,13 @@ class SteeringBridgeModelListView(ListView):
         return context
 
 
-class ServiceTypeListView(ListView):
+class ServiceTypeListView(PermissionRequiredMixin, ListView):
+    permission_required = ('service.view_servicetype')
     model = ServiceType
     context_object_name = 'servicetype'
     template_name = 'lists/servicetype_list.html'
     queryset = ServiceType.objects.all()
+    login_url = '/'
 
     def get_context_data(self, **kwargs):  # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (привет, полиморфизм, мы скучали!!!)
         context = super().get_context_data(**kwargs)
@@ -321,11 +394,13 @@ class ServiceTypeListView(ListView):
         return context
 
 
-class FailureNodeListView(ListView):
+class FailureNodeListView(PermissionRequiredMixin, ListView):
+    permission_required = ('service.view_failurenode')
     model = FailureNode
     context_object_name = 'failurenode'
     template_name = 'lists/failurenode_list.html'
     queryset = FailureNode.objects.all()
+    login_url = '/'
 
     def get_context_data(self, **kwargs):  # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (привет, полиморфизм, мы скучали!!!)
         context = super().get_context_data(**kwargs)
@@ -333,11 +408,13 @@ class FailureNodeListView(ListView):
         return context
 
 
-class RecoveryMethodListView(ListView):
+class RecoveryMethodListView(PermissionRequiredMixin, ListView):
+    permission_required = ('service.view_recoverymethod')
     model = RecoveryMethod
     context_object_name = 'recoverymethod'
     template_name = 'lists/recoverymethod_list.html'
     queryset = RecoveryMethod.objects.all()
+    login_url = '/'
 
     def get_context_data(self, **kwargs):  # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (привет, полиморфизм, мы скучали!!!)
         context = super().get_context_data(**kwargs)
@@ -345,101 +422,128 @@ class RecoveryMethodListView(ListView):
         return context
 
 # Добавление списков
-class ServiceCompanyCreateVew(CreateView):
+class ServiceCompanyCreateVew(PermissionRequiredMixin, CreateView):
+    permission_required = ('service.add_servicecompany')
     template_name = 'lists/create.html'
     form_class = ServiceCompanyForm
+    login_url = '/'
 
 
-class TechniqueModelCreateVew(CreateView):
+class TechniqueModelCreateVew(PermissionRequiredMixin, CreateView):
+    permission_required = ('service.add_techniquemodel')
     template_name = 'lists/create.html'
     form_class = TechniqueModelForm
+    login_url = '/'
 
-class EngineModelCreateVew(CreateView):
+class EngineModelCreateVew(PermissionRequiredMixin, CreateView):
+    permission_required = ('service.add_enginemodel')
     template_name = 'lists/create.html'
     form_class = EngineModelForm
+    login_url = '/'
 
-class TransmissionModelCreateVew(CreateView):
+class TransmissionModelCreateVew(PermissionRequiredMixin, CreateView):
+    permission_required = ('service.add_transmissionmodel')
     template_name = 'lists/create.html'
     form_class = TransmissionModelForm
+    login_url = '/'
 
-class DriveAxleModelCreateVew(CreateView):
+class DriveAxleModelCreateVew(PermissionRequiredMixin, CreateView):
+    permission_required = ('service.add_driveaxlemodel')
     template_name = 'lists/create.html'
     form_class = DriveAxleModelForm
+    login_url = '/'
 
-class SteeringBridgeModelCreateVew(CreateView):
+class SteeringBridgeModelCreateVew(PermissionRequiredMixin, CreateView):
+    permission_required = ('service.add_steeringbridgemodel')
     template_name = 'lists/create.html'
     form_class = SteeringBridgeModelForm
+    login_url = '/'
 
-class ServiceTypeCreateVew(CreateView):
+class ServiceTypeCreateVew(PermissionRequiredMixin, CreateView):
+    permission_required = ('service.add_servicetype')
     template_name = 'lists/create.html'
     form_class = ServiceTypeForm
+    login_url = '/'
 
-class FailureNodeCreateVew(CreateView):
+class FailureNodeCreateVew(PermissionRequiredMixin, CreateView):
+    permission_required = ('service.add_failurenode')
     template_name = 'lists/create.html'
     form_class = FailureNodeForm
+    login_url = '/'
 
-class RecoveryMethodCreateVew(CreateView):
+class RecoveryMethodCreateVew(PermissionRequiredMixin, CreateView):
+    permission_required = ('service.add_recoverymethod')
     template_name = 'lists/create.html'
     form_class = RecoveryMethodForm
+    login_url = '/'
 
 # Формы для удаления списков
-class ServiceCompanyDeleteView(DeleteView):
-    # permission_required = ('',)
+class ServiceCompanyDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = ('service.delete_servicecompany')
     template_name = 'lists/delete_servicecompany.html'
     queryset = ServiceCompany.objects.all()
     success_url = '/servisecomp/'
+    login_url = '/'
 
-class TechniqueModelDeleteView(DeleteView):
-    # permission_required = ('',)
+class TechniqueModelDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = ('service.delete_techniquemodel')
     template_name = 'lists/delete_techniquemodel.html'
     queryset = TechniqueModel.objects.all()
     success_url = '/modeltech/'
+    login_url = '/'
 
-class EngineModelDeleteView(DeleteView):
-    # permission_required = ('',)
+class EngineModelDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = ('service.delete_enginemodel')
     template_name = 'lists/delete_enginemodel.html'
     queryset = EngineModel.objects.all()
     success_url = '/modeleng/'
+    login_url = '/'
 
-class TransmissionModelDeleteView(DeleteView):
-    # permission_required = ('',)
+class TransmissionModelDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = ('service.delete_transmissionmodel')
     template_name = 'lists/delete_transmissionmodel.html'
     queryset = TransmissionModel.objects.all()
     success_url = '/modeltrans/'
+    login_url = '/'
 
-class DriveAxleModelDeleteView(DeleteView):
-    # permission_required = ('',)
+class DriveAxleModelDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = ('service.delete_driveaxlemodel')
     template_name = 'lists/delete_driveaxlemodel.html'
     queryset = DriveAxleModel.objects.all()
     success_url = '/modelaxel/'
+    login_url = '/'
 
-class SteeringBridgeModelDeleteView(DeleteView):
-    # permission_required = ('',)
+class SteeringBridgeModelDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = ('service.delete_steeringbridgemodel')
     template_name = 'lists/delete_steeringbridgemodel.html'
     queryset = SteeringBridgeModel.objects.all()
     success_url = '/modelsteer/'
+    login_url = '/'
 
-class ServiceTypeDeleteView(DeleteView):
-    # permission_required = ('',)
+class ServiceTypeDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = ('service.delete_servicetype')
     template_name = 'lists/delete_servicetype.html'
     queryset = ServiceType.objects.all()
     success_url = '/servisetype/'
+    login_url = '/'
 
-class FailureNodeDeleteView(DeleteView):
-    # permission_required = ('',)
+class FailureNodeDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = ('service.delete_failurenode')
     template_name = 'lists/delete_failurenode.html'
     queryset = FailureNode.objects.all()
     success_url = '/fnode/'
+    login_url = '/'
 
-class RecoveryMethodDeleteView(DeleteView):
-    # permission_required = ('',)
+class RecoveryMethodDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = ('service.delete_recoverymethod')
     template_name = 'lists/delete_recoverymethod.html'
     queryset = RecoveryMethod.objects.all()
     success_url = '/reco/'
+    login_url = '/'
 
 # Редактирование списков
-class ServiceCompanyUpdateView(UpdateView):
-    # permission_required = ('',)
+class ServiceCompanyUpdateView(PermissionRequiredMixin, UpdateView):
+    permission_required = ('service.change_servicecompany')
     template_name = 'lists/create.html'
     form_class = ServiceCompanyForm # Форму берём ту же что и для добавления новых данных
 
@@ -447,8 +551,8 @@ class ServiceCompanyUpdateView(UpdateView):
         id = self.kwargs.get('pk')
         return ServiceCompany.objects.get(pk=id)
 
-class TechniqueModelUpdateView(UpdateView):
-    # permission_required = ('',)
+class TechniqueModelUpdateView(PermissionRequiredMixin, UpdateView):
+    permission_required = ('service.change_techniquemodel')
     template_name = 'lists/create.html'
     form_class = TechniqueModelForm # Форму берём ту же что и для добавления новых данных
 
@@ -456,8 +560,8 @@ class TechniqueModelUpdateView(UpdateView):
         id = self.kwargs.get('pk')
         return TechniqueModel.objects.get(pk=id)
 
-class EngineModellUpdateView(UpdateView):
-    # permission_required = ('',)
+class EngineModelUpdateView(PermissionRequiredMixin, UpdateView):
+    permission_required = ('service.change_enginemodel')
     template_name = 'lists/create.html'
     form_class = EngineModelForm # Форму берём ту же что и для добавления новых данных
 
@@ -465,8 +569,8 @@ class EngineModellUpdateView(UpdateView):
         id = self.kwargs.get('pk')
         return EngineModel.objects.get(pk=id)
 
-class TransmissionModelUpdateView(UpdateView):
-    # permission_required = ('',)
+class TransmissionModelUpdateView(PermissionRequiredMixin, UpdateView):
+    permission_required = ('service.change_transmissionmodel')
     template_name = 'lists/create.html'
     form_class = TransmissionModelForm # Форму берём ту же что и для добавления новых данных
 
@@ -474,8 +578,8 @@ class TransmissionModelUpdateView(UpdateView):
         id = self.kwargs.get('pk')
         return TransmissionModel.objects.get(pk=id)
 
-class DriveAxleModelUpdateView(UpdateView):
-    # permission_required = ('',)
+class DriveAxleModelUpdateView(PermissionRequiredMixin, UpdateView):
+    permission_required = ('service.change_driveaxlemodel')
     template_name = 'lists/create.html'
     form_class = DriveAxleModelForm # Форму берём ту же что и для добавления новых данных
 
@@ -483,8 +587,8 @@ class DriveAxleModelUpdateView(UpdateView):
         id = self.kwargs.get('pk')
         return DriveAxleModel.objects.get(pk=id)
 
-class SteeringBridgeModelUpdateView(UpdateView):
-    # permission_required = ('',)
+class SteeringBridgeModelUpdateView(PermissionRequiredMixin, UpdateView):
+    permission_required = ('service.change_steeringbridgemodel')
     template_name = 'lists/create.html'
     form_class = SteeringBridgeModelForm # Форму берём ту же что и для добавления новых данных
 
@@ -492,8 +596,8 @@ class SteeringBridgeModelUpdateView(UpdateView):
         id = self.kwargs.get('pk')
         return SteeringBridgeModel.objects.get(pk=id)
 
-class ServiceTypeUpdateView(UpdateView):
-    # permission_required = ('',)
+class ServiceTypeUpdateView(PermissionRequiredMixin, UpdateView):
+    permission_required = ('service.change_servicetype')
     template_name = 'lists/create.html'
     form_class = ServiceTypeForm # Форму берём ту же что и для добавления новых данных
 
@@ -501,8 +605,8 @@ class ServiceTypeUpdateView(UpdateView):
         id = self.kwargs.get('pk')
         return ServiceType.objects.get(pk=id)
 
-class FailureNodeUpdateView(UpdateView):
-    # permission_required = ('',)
+class FailureNodeUpdateView(PermissionRequiredMixin, UpdateView):
+    permission_required = ('service.change_failurenode')
     template_name = 'lists/create.html'
     form_class = FailureNodeForm # Форму берём ту же что и для добавления новых данных
 
@@ -510,8 +614,8 @@ class FailureNodeUpdateView(UpdateView):
         id = self.kwargs.get('pk')
         return FailureNode.objects.get(pk=id)
 
-class RecoveryMethodUpdateView(UpdateView):
-    # permission_required = ('',)
+class RecoveryMethodUpdateView(PermissionRequiredMixin, UpdateView):
+    permission_required = ('service.change_recoverymethod')
     template_name = 'lists/create.html'
     form_class = RecoveryMethodForm # Форму берём ту же что и для добавления новых данных
 

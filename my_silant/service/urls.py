@@ -55,7 +55,7 @@ urlpatterns = [
     #Редактирование списков
     path('edit_servisecomp/<int:pk>/', ServiceCompanyUpdateView.as_view(), name='edit_servisecomp'),
     path('edit_modeltech/<int:pk>/', TechniqueModelUpdateView.as_view(), name='edit_modeltech'),
-    path('edit_enginemodel/<int:pk>/', EngineModellUpdateView.as_view(), name='edit_enginemodel'),
+    path('edit_enginemodel/<int:pk>/', EngineModelUpdateView.as_view(), name='edit_enginemodel'),
     path('edit_modeltrans/<int:pk>/', TransmissionModelUpdateView.as_view(), name='edit_modeltrans'),
     path('edit_modelaxel/<int:pk>/', DriveAxleModelUpdateView.as_view(), name='edit_modelaxel'),
     path('edit_modelsteer/<int:pk>/', SteeringBridgeModelUpdateView.as_view(), name='edit_modelsteer'),

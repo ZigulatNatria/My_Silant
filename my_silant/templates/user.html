@@ -90,6 +90,15 @@
               </span>
             </div>
             </a>
+             {% if is_manager == 'Менеджер' %}
+            <a href="/servisecomp/">
+            <div class="tab">
+              <span>
+                Списки
+              </span>
+            </div>
+            </a>
+            {% endif %}
           </div>
         </div>
         <div class="result_collection">
@@ -106,9 +115,12 @@
               <th class="nam left">Модель управляемого моста</th>
               <th class="nam left">Зав. № управляемого моста</th>
               <th class="nam left">Дата отгрузки с завода</th>
+              <th class="nam left">Клиент</th>
+              <th class="nam left">Сервисная компания</th>
               <th class="nam left">Детали</th>
             </tr>
             {% for m in filter.qs %}
+            {% if m.client == request.user.first_name or m.service_company.name == request.user.first_name or is_manager == 'Менеджер' %}
             <tr id="myUL">
               <td class="nam left">{{m.number_machine}}</td>
               <td class="nam left">{{m.technique_model}}</td>
@@ -121,6 +133,8 @@
               <td class="nam left">{{m.steering_bridge_model}}</td>
               <td class="nam left">{{m.steering_bridge_number}}</td>
               <td class="nam left">{{m.shipping_date}}</td>
+              <td class="nam left">{{m.client}}</td>
+              <td class="nam left">{{m.service_company}}</td>
               <td class="nam left">
                 <div class="tabs">
                   <a href="{% url 'machine_detail' m.pk %}">
@@ -133,6 +147,7 @@
                 </div>
               </td>
             </tr>
+            {% endif %}
             {% endfor %}
           </tbody></table>
           {% if machine == 'К сожалению Ваша техника отсутствует в базе :(' %}
