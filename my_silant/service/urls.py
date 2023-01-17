@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import *
+from rest_framework.schemas import get_schema_view
 from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
@@ -62,4 +63,13 @@ urlpatterns = [
     path('edit_servisetype/<int:pk>/', ServiceTypeUpdateView.as_view(), name='edit_servisetype'),
     path('edit_fnode/<int:pk>/', FailureNodeUpdateView.as_view(), name='edit_fnode'),
     path('edit_reco/<int:pk>/', RecoveryMethodUpdateView.as_view(), name='edit_reco'),
+    # API
+    path('api/machine/', MachineAPIVew.as_view()),
+    path('api/to/', TOAPIVew.as_view()),
+    path('api/complaint/', ComplaintAPIVew.as_view()),
+    path('openapi', get_schema_view(
+        title="My_Silant",
+        description="API for My_Silant",
+        version="v 1.0.0"
+    ), name='openapi-schema'),
 ]

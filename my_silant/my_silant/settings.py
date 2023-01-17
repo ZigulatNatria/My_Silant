@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'sign',
     'protect',
     'corsheaders',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

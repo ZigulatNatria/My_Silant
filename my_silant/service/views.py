@@ -7,6 +7,8 @@ from .models import Machine, TO, Complaint, ServiceCompany, TechniqueModel, Engi
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from .forms import *
 from .filters import *
+from rest_framework import generics
+from .serializers import MachineSerializer, TOSerializer, ComplaintSerializer
 # Create your views here.
 
 
@@ -622,3 +624,19 @@ class RecoveryMethodUpdateView(PermissionRequiredMixin, UpdateView):
     def get_object(self, **kwargs):
         id = self.kwargs.get('pk')
         return RecoveryMethod.objects.get(pk=id)
+
+
+# Вьюхи для API
+class MachineAPIVew(generics.ListAPIView):
+    queryset = Machine.objects.all()
+    serializer_class = MachineSerializer
+
+
+class TOAPIVew(generics.ListAPIView):
+    queryset = TO.objects.all()
+    serializer_class = TOSerializer
+
+
+class ComplaintAPIVew(generics.ListAPIView):
+    queryset = Complaint.objects.all()
+    serializer_class = ComplaintSerializer
