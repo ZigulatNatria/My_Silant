@@ -130,7 +130,7 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_URL = 'sign/login/'
+LOGIN_URL = '/sign/login/'
 LOGIN_REDIRECT_URL = '/user/'   #По этому пути редиректится после авторизации
 
 CORS_ORIGIN_WHITELIST = [

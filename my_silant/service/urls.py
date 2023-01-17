@@ -4,7 +4,7 @@ from rest_framework.schemas import get_schema_view
 from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
-    path('search/', SearchMachines.as_view(), name='search'),
+    path('', SearchMachines.as_view(), name='search'),
     path('user/', by_user_machine, name='user'),
     path('to/', TOListVew.as_view(), name='to'),
     # path('complaint/', by_user_complaint, name='complaint'),
